@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+
+{% block title %}Search - miRGen v5{% endblock %}
+
+{% block content %}
+<!-- Search Header -->
+<section class="bg-light py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="h3 mb-3">Search miRGen Database</h1>
+                
+                <!-- Search Form -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form method="GET" action="{% url 'search' %}">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="type" class="form-label">Search Type</label>
+                                    <select class="form-select" id="type" name="type">
+                                        <option value="mirna" {% if search_type == 'mirna' %}selected{% endif %}>miRNA Name</option>
+                                        <option value="gene" {% if search_type == 'gene' %}selected{% endif %}>Target Gene</option>
+                                        <option value="sequence" {% if search_type == 'sequence' %}selected{% endif %}>Sequence</option>
+                                        <option value="pathway" {% if search_type == 'pathway' %}selected{% endif %}>Pathway</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-7">
+                                    <label for="q" class="form-label">Search Query</label>
+                                    <input type="text" class="form-control" id="q" name="q" 
+                                           value="{{ query }}" placeholder="Enter your search query...">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results -->
+{% if query %}
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Results Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 mb-0">
+                        Search Results for "{{ query }}"
+                        <span class="badge bg-primary ms-2">{{ results_count }} results</span>
+                    </h2>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results List -->
+                {% if results %}
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            {% for result in results %}
+                                <div class="result-item">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            {% if search_type == 'mirna' %}
+                                                <h6 class="fw-bold text-primary mb-1">
+                                                    <a href="{% url 'mirna_detail' result.name %}" class="text-decoration-none">
+                                                        {{ result.name }}
+                                                    </a>
+                                                </h6>
+                                                <small class="text-muted d-block">{{ result.sequence|truncatechars:50 }}</small>
+                                                <small class="text-muted">{{ result.species.name }}</small>
+                                            {% elif search_type == 'gene' %}
+                                                <h6 class="fw-bold text-primary mb-1">
+                                                    <a href="{% url 'gene_detail' result.name %}" class="text-decoration-none">
+                                                        {{ result.name }}
+                                                    </a>
+                                                </h6>
+                                                {% if result.symbol %}
+                                                    <small class="text-muted d-block">Symbol: {{ result.symbol }}</small>
+                                                {% endif %}
+                                                <small class="text-muted">{{ result.species.name }}</small>
+                                            {% elif search_type == 'pathway' %}
+                                                <h6 class="fw-bold text-primary mb-1">{{ result.name }}</h6>
+                                                <small class="text-muted">{{ result.description|truncatechars:100 }}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3">
+                                            {% if search_type == 'mirna' %}
+                                                <span class="badge bg-success me-2">{{ result.target_count }} targets</span>
+                                            {% elif search_type == 'gene' %}
+                                                <span class="badge bg-info me-2">{{ result.mirna_count }} miRNAs</span>
+                                            {% elif search_type == 'pathway' %}
+                                                <span class="badge bg-warning me-2">{{ result.genes.count }} genes</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button class="btn btn-outline-primary" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-secondary" title="Download Data">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button class="btn btn-outline-info" title="Add to Collection">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if results.has_other_pages %}
+                        <nav aria-label="Search results pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if results.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&type={{ search_type }}&page={{ results.previous_page_number }}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in results.paginator.page_range %}
+                                    {% if results.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > results.number|add:'-3' and num < results.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?q={{ query }}&type={{ search_type }}&page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if results.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&type={{ search_type }}&page={{ results.next_page_number }}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+
+                {% else %}
+                    <!-- No Results -->
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No results found</h4>
+                            <p class="text-muted mb-4">
+                                We couldn't find any results for "{{ query }}". 
+                                Try adjusting your search terms or browse our database.
+                            </p>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <a href="{% url 'browse' %}" class="btn btn-primary">
+                                    <i class="fas fa-list me-2"></i>Browse Database
+                                </a>
+                                <a href="{% url 'help' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-question-circle me-2"></i>Get Help
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Tips -->
+<section class="bg-light py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>Search Tips
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <strong>miRNA Names:</strong> Use standard nomenclature (e.g., hsa-miR-21-5p)
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Gene Names:</strong> Use official gene symbols (e.g., TP53, PTEN)
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <strong>Sequences:</strong> Use RNA sequence (e.g., UAGCUUAUCAGACUGAUGUUGA)
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Pathways:</strong> Search by pathway name or description
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-submit form when search type changes
+document.getElementById('type').addEventListener('change', function() {
+    if (document.getElementById('q').value.trim()) {
+        this.form.submit();
+    }
+});
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('q').focus();
+    }
+});
+</script>
+{% endblock %} 

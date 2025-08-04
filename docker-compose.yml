@@ -1,10 +1,13 @@
-version: '3.8'
 services:
   web:
     build:
-      context: ./backend
+      context: .                  # project root
+      dockerfile: backend/Dockerfile  # points to backend/Dockerfile
     env_file: .env
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend   # mounts code
+      - ./frontend:/app/frontend # mounts templates/static
+    working_dir: /app/backend
     ports:
       - "8000:8000"
+    command: gunicorn mirgen_site.wsgi:application --bind 0.0.0.0:8000

@@ -1,0 +1,340 @@
+/* Home Page Styles */
+
+/* Hero Section */
+.hero-section {
+    min-height: calc(100vh - 97px - 40px); /* Adjusted for fixed footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; /* Reduced padding */
+    text-align: center;
+    padding-bottom: 2rem; /* Add bottom padding to account for fixed footer */
+}
+
+.hero-content {
+    max-width: 800px; /* Increased from 600px to accommodate wider search container */
+    width: 100%;
+}
+
+/* Hero Icon */
+.hero-icon {
+    font-size: 3.5rem; /* Slightly smaller */
+    color: #8ab4f8;
+    margin-bottom: 1rem; /* Reduced margin */
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Hero Title */
+.hero-title {
+    font-size: 2.5rem; /* Smaller title */
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.75rem; /* Reduced margin */
+    background: linear-gradient(135deg, #8ab4f8, #34a853);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Hero Subtitle */
+.hero-subtitle {
+    font-size: 1.1rem; /* Smaller subtitle */
+    color: #666;
+    margin-bottom: 2rem; /* Reduced margin */
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* Search Container */
+.search-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem; /* Increased padding back */
+    max-width: 700px; /* Increased from 500px to accommodate side-by-side fields */
+    width: 100%; /* Ensure it doesn't exceed container */
+    margin: 0 auto;
+    border: 1px solid rgba(138, 180, 248, 0.1);
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Search Form */
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Increased gap back */
+}
+
+/* Form Row for side-by-side fields */
+.form-row {
+    display: grid;
+    grid-template-columns: 0.6fr 1fr; /* Organism takes 0.6, miRNA takes 1 */
+    gap: 1.5rem; /* Increased gap for better spacing */
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem; /* Back to original size */
+    margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.875rem 1rem; /* Back to original padding */
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem; /* Back to original font size */
+    transition: all 0.3s ease;
+    background: white;
+    color: #333;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #8ab4f8;
+    box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #9aa0a6;
+    font-style: italic;
+}
+
+/* Organism Group - Make dropdown narrower */
+.organism-group select {
+    min-width: 0;
+    width: 100%;
+}
+
+/* Search Button - Match miRGen logo color */
+.search-btn {
+    background: linear-gradient(135deg, #8ab4f8, #34a853); /* Same as miRGen logo */
+    color: white;
+    border: none;
+    padding: 1rem 2rem; /* Back to original padding */
+    border-radius: 8px;
+    font-size: 1.1rem; /* Back to original font size */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem; /* Back to original margin */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(138, 180, 248, 0.3);
+}
+
+.search-btn:active {
+    transform: translateY(0);
+}
+
+.search-btn i {
+    font-size: 1rem; /* Back to original size */
+}
+
+/* Loading State */
+.search-btn.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.search-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Search Results */
+.search-results {
+    margin-top: 2rem; /* Back to original margin */
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.result-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(138, 180, 248, 0.1);
+    transition: all 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.result-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.result-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.result-badge {
+    background: linear-gradient(135deg, #8ab4f8, #34a853);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.result-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 3rem 1rem; /* Back to original padding */
+    color: #666;
+}
+
+.no-results i {
+    font-size: 3rem; /* Back to original size */
+    color: #9aa0a6;
+    margin-bottom: 1rem;
+}
+
+.no-results h3 {
+    font-size: 1.5rem; /* Back to original size */
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.no-results p {
+    font-size: 1rem; /* Back to original size */
+    color: #666;
+}
+
+/* Error State */
+.error-message {
+    background: rgba(234, 67, 53, 0.1);
+    border: 1px solid rgba(234, 67, 53, 0.2);
+    color: #ea4335;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 0.75rem; /* Reduced padding */
+        min-height: calc(100vh - 90px - 35px); /* Adjusted for fixed footer */
+        padding-bottom: 1.5rem; /* Add bottom padding for mobile */
+    }
+
+    .hero-content {
+        max-width: 100%; /* Full width on mobile */
+    }
+
+    .hero-title {
+        font-size: 2rem; /* Smaller on mobile */
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .search-container {
+        padding: 2rem 1.5rem; /* Back to original padding */
+        margin: 0 1rem; /* Back to original margin */
+        max-width: none; /* Allow full width on mobile */
+    }
+
+    .hero-icon {
+        font-size: 2.5rem; /* Smaller on mobile */
+    }
+
+    /* Stack form fields vertically on mobile */
+    .form-row {
+        grid-template-columns: 1fr; /* Single column on mobile */
+        gap: 1.5rem; /* Back to original gap */
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.75rem; /* Even smaller on very small screens */
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .search-container {
+        padding: 1.5rem 1rem; /* Back to original padding */
+        margin: 0 0.5rem; /* Back to original margin */
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 0.75rem 0.875rem; /* Back to original padding */
+    }
+
+    .search-btn {
+        padding: 0.875rem 1.5rem; /* Back to original padding */
+        font-size: 1rem; /* Back to original font size */
+    }
+} 

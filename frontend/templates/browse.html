@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Database - miRGen v5{% endblock %}
+
+{% block content %}
+<!-- Browse Header -->
+<section class="bg-light py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h3 mb-3">Browse miRGen Database</h1>
+                <p class="text-muted">Explore our comprehensive collection of miRNAs, target genes, and species data.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Browse Content -->
+<section class="py-4">
+    <div class="container">
+        <!-- Species Overview -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="h4 mb-4">
+                    <i class="fas fa-dna text-primary me-2"></i>Species
+                </h2>
+                <div class="row g-4">
+                    {% for species in species %}
+                        <div class="col-md-4 col-lg-3">
+                            <div class="card h-100 border-0 shadow-sm hover-lift">
+                                <div class="card-body text-center p-3">
+                                    <div class="species-icon mb-3">
+                                        <i class="fas fa-leaf text-success fa-2x"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">{{ species.name }}</h6>
+                                    <small class="text-muted d-block">{{ species.scientific_name }}</small>
+                                    <div class="mt-3">
+                                        <span class="badge bg-primary me-1">{{ species.mirnas.count }} miRNAs</span>
+                                        <span class="badge bg-info">{{ species.genes.count }} genes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="card border-0">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No species data available</h5>
+                                    <p class="text-muted">Species data will be populated when the database is loaded.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- miRNAs Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 mb-0">
+                        <i class="fas fa-microscope text-primary me-2"></i>Recent miRNAs
+                    </h2>
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Species</th>
+                                        <th>Sequence</th>
+                                        <th>Targets</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for mirna in mirnas %}
+                                        <tr>
+                                            <td>
+                                                <strong class="text-primary">{{ mirna.name }}</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ mirna.species.name }}</span>
+                                            </td>
+                                            <td>
+                                                <code class="small">{{ mirna.sequence|truncatechars:30 }}</code>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">{{ mirna.target_count }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'mirna_detail' mirna.name %}" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <button class="btn btn-outline-secondary">
+                                                        <i class="fas fa-download"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">
+                                                <i class="fas fa-database fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-0">No miRNA data available</p>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Genes Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 mb-0">
+                        <i class="fas fa-gene text-primary me-2"></i>Recent Genes
+                    </h2>
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Symbol</th>
+                                        <th>Species</th>
+                                        <th>Targeting miRNAs</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for gene in genes %}
+                                        <tr>
+                                            <td>
+                                                <strong class="text-primary">{{ gene.name }}</strong>
+                                            </td>
+                                            <td>
+                                                {% if gene.symbol %}
+                                                    <code>{{ gene.symbol }}</code>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ gene.species.name }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ gene.mirna_count }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'gene_detail' gene.name %}" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <button class="btn btn-outline-secondary">
+                                                        <i class="fas fa-download"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">
+                                                <i class="fas fa-database fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-0">No gene data available</p>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-gradient-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="fas fa-chart-bar me-2"></i>Database Statistics
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="display-6 fw-bold">{{ species.count }}</h3>
+                                    <p class="mb-0">Species</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="display-6 fw-bold">{{ mirnas.count }}</h3>
+                                    <p class="mb-0">miRNAs</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="display-6 fw-bold">{{ genes.count }}</h3>
+                                    <p class="mb-0">Genes</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <h3 class="display-6 fw-bold">-</h3>
+                                    <p class="mb-0">Pathways</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add hover effects for table rows
+document.querySelectorAll('.table-hover tbody tr').forEach(row => {
+    row.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.01)';
+        this.style.transition = 'transform 0.2s ease';
+    });
+    
+    row.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
+
+// Add click handlers for action buttons
+document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        if (!this.getAttribute('href')) {
+            e.preventDefault();
+            // Add loading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-eye"></i>';
+            }, 1000);
+        }
+    });
+});
+</script>
+{% endblock %} 

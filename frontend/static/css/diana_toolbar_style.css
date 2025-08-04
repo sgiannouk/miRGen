@@ -1,0 +1,699 @@
+/* DIANA Toolbar Styles */
+
+/* DIANA Toolbar Container */
+.diana-toolbar {
+    background: #313135 !important;
+    border-bottom: 1px solid #5f6368;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-width: 100vw !important;
+}
+
+.toolbar-content {
+    background: #313135 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 2rem;
+    position: relative;
+    z-index: 2;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+/* DIANA Logo */
+.toolbar-brand {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: transparent !important;
+    color: white !important;
+}
+
+.toolbar-brand i {
+    font-size: 1.1rem;
+    margin-right: 0.4rem;
+    color: #8DA9F0 !important;
+    background: transparent !important;
+}
+
+.brand-text {
+    display: flex;
+    align-items: center;
+    background: transparent !important;
+    color: white !important;
+}
+
+/* DIANA Logo Gradient - Horizontal Blue to Green */
+.brand-diana {
+    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 600;
+}
+
+.brand-tools {
+    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 600;
+}
+
+.diana-toolbar .brand-diana {
+    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 600;
+}
+
+.diana-toolbar .brand-tools {
+    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 600;
+}
+
+/* Navigation Links */
+.toolbar-nav {
+    background: #313135 !important;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.toolbar-link {
+    background: #313135 !important;
+    color: #9aa0a6 !important;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #e8eaed !important;
+    transform: translateY(-1px);
+}
+
+/* Dropdown Button */
+.toolbar-dropdown {
+    position: relative;
+    z-index: 10001;
+}
+
+.toolbar-dropdown-btn {
+    background: #313135 !important;
+    color: #9aa0a6 !important;
+    border: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer !important;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 10002;
+    pointer-events: auto !important;
+}
+
+.toolbar-dropdown-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #e8eaed !important;
+}
+
+.dropdown-icon {
+    transition: transform 0.2s ease;
+}
+
+.toolbar-dropdown.active .dropdown-icon {
+    transform: rotate(180deg);
+}
+
+/* Visual indicator for active dropdown */
+.toolbar-dropdown.active .toolbar-dropdown-btn {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: #e8eaed !important;
+}
+
+/* Dropdown Menu */
+.toolbar-dropdown-menu {
+    background: #313135 !important;
+    position: fixed;
+    top: 60px;
+    right: 2rem;
+    width: 700px;
+    border: 1px solid #4a4a4a;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    padding: 0.75rem 0;
+    margin-top: 0.25rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 99999;
+}
+
+.toolbar-dropdown.active .toolbar-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #4a4a4a;
+    margin-bottom: 0.25rem;
+}
+
+/* Two-column layout for tools */
+#tools-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0 0.75rem;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: absolute;
+    background: #202124;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    max-width: 300px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 100000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+}
+
+.tooltip.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 0.125rem;
+}
+
+.dropdown-item:hover {
+    background-color: #404040;
+    border-left-color: #8DA9F0;
+    transform: translateX(5px);
+}
+
+.dropdown-item.active {
+    background-color: rgba(141, 169, 240, 0.2);
+    border-left-color: #8DA9F0;
+}
+
+.dropdown-item.active .tool-name {
+    color: #8DA9F0;
+}
+
+.tool-info {
+    flex: 1;
+}
+
+.tool-name {
+    font-weight: 600;
+    color: #e5e7eb;
+    font-size: 0.9rem;
+}
+
+.tool-desc {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-top: 0.2rem;
+}
+
+.dropdown-item i {
+    color: #9ca3af;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.dropdown-item:hover i {
+    color: #8DA9F0;
+}
+
+.dropdown-item.active i {
+    color: #8DA9F0;
+}
+
+/* Tool Type Badges */
+.tool-type-badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 0.4rem;
+}
+
+.tool-type-badge.algorithm {
+    background-color: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+}
+
+.tool-type-badge.database {
+    background-color: rgba(138, 169, 240, 0.2);
+    color: #8ab4f8;
+}
+
+.tool-version-badge {
+    display: inline-block;
+    padding: 0.1rem 0.3rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin-left: 0.4rem;
+}
+
+/* Mobile Menu */
+.toolbar-mobile {
+    display: none;
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    color: #9aa0a6;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e8eaed;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-container {
+    background: #313135;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    transform: scale(0.9) translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active .modal-container {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    background: #313135;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+}
+
+.modal-title i {
+    font-size: 1.5rem;
+    color: #8DA9F0;
+}
+
+.modal-title .brand-diana {
+    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 600;
+}
+
+.modal-title .brand-tools {
+    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #9aa0a6;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #9aa0a6;
+    background-color: transparent;
+}
+
+.modal-body {
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.about-content {
+    color: white;
+    line-height: 1.7;
+}
+
+.about-intro {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.about-focus {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.research-activities {
+    margin: 2rem 0;
+}
+
+.research-activities h4 {
+    color: #8ab4f8;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(138, 180, 248, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #8ab4f8;
+    transition: all 0.2s ease;
+}
+
+.activity-list li:hover {
+    background: rgba(138, 180, 248, 0.1);
+    transform: translateX(5px);
+}
+
+.activity-list li i {
+    color: #8ab4f8;
+    font-size: 1.1rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+}
+
+.activity-list li span {
+    color: white;
+}
+
+.about-conclusion {
+    font-size: 1rem;
+    margin-top: 2rem;
+    color: white;
+}
+
+.about-website {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.about-website p {
+    margin: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.about-website i {
+    color: #8ab4f8;
+    font-size: 1.1rem;
+}
+
+.website-link {
+    color: #8ab4f8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(138, 169, 240, 0.1);
+}
+
+.website-link:hover {
+    background: rgba(138, 169, 240, 0.2);
+    color: #8ab4f8;
+    transform: translateY(-1px);
+}
+
+/* Contact Form */
+.contact-form {
+    color: white;
+}
+
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: white;
+    font-weight: 500;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #8ab4f8;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(138, 169, 240, 0.1);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.contact-form .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-form .btn-primary {
+    background: #8ab4f8;
+    color: #000;
+}
+
+.contact-form .btn-primary:hover {
+    background: #7aa3e7;
+    transform: translateY(-1px);
+}
+
+.contact-form .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.contact-form .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.contact-form input:invalid,
+.contact-form textarea:invalid {
+    border-color: #ea4335;
+}
+
+.contact-form input:invalid:focus,
+.contact-form textarea:invalid:focus {
+    box-shadow: 0 0 0 3px rgba(234, 67, 53, 0.1);
+}
+
+.form-message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+.form-message.success {
+    background: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+    border: 1px solid rgba(52, 168, 83, 0.3);
+}
+
+.form-message.error {
+    background: rgba(234, 67, 53, 0.2);
+    color: #ea4335;
+    border: 1px solid rgba(234, 67, 53, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .toolbar-nav {
+        display: none;
+    }
+    
+    .toolbar-mobile {
+        display: block;
+    }
+    
+    .toolbar-dropdown-menu {
+        width: 90vw;
+        right: 1rem;
+        left: 1rem;
+    }
+    
+    #tools-container {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+        padding: 0 0.5rem;
+    }
+    
+    .modal-container {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .contact-form .form-actions {
+        flex-direction: column;
+    }
+    
+    .contact-form .btn {
+        width: 100%;
+        justify-content: center;
+    }
+} 

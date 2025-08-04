@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}miRGen Database - Your friendly portal to miRNA TSS data{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-content">
+        <!-- Hero Icon -->
+        <div class="hero-icon">
+            <i class="fas fa-flask"></i>
+        </div>
+
+        <!-- Hero Title -->
+        <h1 class="hero-title">miRGen Database</h1>
+
+        <!-- Hero Subtitle -->
+        <p class="hero-subtitle">Your friendly portal to miRNA TSS data</p>
+
+        <!-- Search Container -->
+        <div class="search-container">
+            <form class="search-form" id="searchForm">
+                <!-- Organism and miRNA Name Row -->
+                <div class="form-row">
+                    <!-- Organism Selection -->
+                    <div class="form-group organism-group">
+                        <label for="organism">Organism</label>
+                        <select id="organism" name="organism" required>
+                            <option value="human_GRCh38" data-display="Human" selected>Human (GRCh38/hg38)</option>
+                            <option value="mouse_GRCm39" data-display="Mouse">Mouse (GRCm39/mm39)</option>
+                            <option value="mouse_GRCm38" data-display="Mouse">Mouse (GRCm38/mm10)</option>
+                        </select>
+                    </div>
+
+                    <!-- miRNA Name Input -->
+                    <div class="form-group">
+                        <label for="mirna_name">miRNA Name</label>
+                        <input
+                            type="text"
+                            id="mirna_name"
+                            name="mirna_name"
+                            placeholder="e.g., hsa-let-7a-5p"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <button type="submit" class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </form>
+
+            <!-- Search Results Container -->
+            <div class="search-results" id="searchResults" style="display: none;">
+                <!-- Results will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home_style.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home_script.js' %}"></script>
+{% endblock %}
