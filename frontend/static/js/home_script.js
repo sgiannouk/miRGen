@@ -9,28 +9,34 @@ document.addEventListener('DOMContentLoaded', function() {
 const miRNA_LISTS = {
     human: [
         'hsa-mir-99b',
-        'hsa-let-7a-1'
+        'hsa-let-7a-1',
+        'hsa-let-7a-2',
+        'hsa-let-7a-3',
+        'hsa-let-7a-5p',
+        'hsa-let-7a-3p'
         // User will add the complete human miRNA list here
     ],
     mouse: [
         'mmu-let-7a-1',
-        'mmu-mir-9b-3'
+        'mmu-mir-9b-3',
+        'mmu-let-7a-2',
+        'mmu-let-7a-3',
+        'mmu-let-7a-5p',
+        'mmu-let-7a-3p'
         // User will add the complete mouse miRNA list here
     ]
 };
 
-// Organism-version mapping
+// Organism-version mapping (removed third mouse option)
 const ORGANISM_VERSION_MAP = {
     'human_GRCh38': { organism: 'human', version: 'GRCh38' },
-    'mouse_GRCm39': { organism: 'mouse', version: 'GRCm39' },
-    'mouse_GRCm38': { organism: 'mouse', version: 'GRCm38' }
+    'mouse_GRCm39': { organism: 'mouse', version: 'GRCm39' }
 };
 
-// Store original texts for all options
+// Store original texts for all options (removed third mouse option)
 const ORIGINAL_TEXTS = {
     'human_GRCh38': 'Human (GRCh38/hg38)',
-    'mouse_GRCm39': 'Mouse (GRCm39/mm39)',
-    'mouse_GRCm38': 'Mouse (GRCm38/mm10)'
+    'mouse_GRCm39': 'Mouse (GRCm39/mm39)'
 };
 
 // Home Page Initialization
@@ -38,6 +44,7 @@ function initializeHomePage() {
     initializeSearchForm();
     initializeOrganismSelection();
     initializeAutocomplete();
+    initializeExampleButton();
     initializeAnimations();
 }
 
@@ -51,8 +58,199 @@ function initializeSearchForm() {
 
     searchForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        // Search functionality removed - form submission is prevented
+        
+        const organismSelect = document.getElementById('organism');
+        const mirnaInput = document.getElementById('mirna_name');
+        
+        if (!organismSelect || !mirnaInput) return;
+        
+        const organismVersion = organismSelect.value;
+        const mirnaName = mirnaInput.value.trim();
+        
+        if (!mirnaName) {
+            return;
+        }
+        
+        // Simulate search delay
+        setTimeout(() => {
+            // Show results
+            showSearchResults(mirnaName, organismVersion);
+        }, 1500);
     });
+}
+
+// Example Button Functionality
+function initializeExampleButton() {
+    const exampleBtn = document.getElementById('exampleBtn');
+    
+    if (!exampleBtn) return;
+    
+    exampleBtn.addEventListener('click', function() {
+        // Set organism to Human
+        const organismSelect = document.getElementById('organism');
+        if (organismSelect) {
+            organismSelect.value = 'human_GRCh38';
+            updateOrganismDisplay('human_GRCh38');
+        }
+        
+        // Set miRNA name to hsa-let-7a
+        const mirnaInput = document.getElementById('mirna_name');
+        if (mirnaInput) {
+            mirnaInput.value = 'hsa-let-7a';
+        }
+        
+        // Update autocomplete suggestions
+        updateAutocompleteSuggestions('human_GRCh38');
+        
+        // Show example results
+        showExampleResults();
+    });
+}
+
+// Show Search Results
+function showSearchResults(mirnaName, organismVersion) {
+    const searchResults = document.getElementById('searchResults');
+    if (!searchResults) return;
+    
+    // Update the miRNA display name
+    const mirnaDisplayName = document.getElementById('mirnaDisplayName');
+    if (mirnaDisplayName) {
+        mirnaDisplayName.textContent = mirnaName;
+    }
+    
+    // Show the results container
+    searchResults.style.display = 'grid';
+    
+    // Initialize collapsible containers
+    initializeCollapsibleContainers();
+    
+    // Scroll to results
+    searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Initialize Collapsible Containers
+function initializeCollapsibleContainers() {
+    // Alternative TSSs
+    const altTssHeader = document.getElementById('altTssHeader');
+    const altTssContent = document.getElementById('altTssContent');
+    const altTssToggle = document.getElementById('altTssToggle');
+    const altTssCard = altTssHeader?.closest('.collapsible-card');
+    
+    if (altTssHeader && altTssContent && altTssToggle) {
+        altTssHeader.addEventListener('click', function(e) {
+            if (e.target !== altTssToggle) {
+                toggleCollapsible(altTssContent, altTssToggle, altTssCard);
+            }
+        });
+        
+        altTssToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleCollapsible(altTssContent, altTssToggle, altTssCard);
+        });
+    }
+    
+    // Transcription Factors
+    const tfHeader = document.getElementById('tfHeader');
+    const tfContent = document.getElementById('tfContent');
+    const tfToggle = document.getElementById('tfToggle');
+    const tfCard = tfHeader?.closest('.collapsible-card');
+    
+    if (tfHeader && tfContent && tfToggle) {
+        tfHeader.addEventListener('click', function(e) {
+            if (e.target !== tfToggle) {
+                toggleCollapsible(tfContent, tfToggle, tfCard);
+            }
+        });
+        
+        tfToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleCollapsible(tfContent, tfToggle, tfCard);
+        });
+    }
+    
+    // Initialize click-to-copy functionality
+    initializeClickToCopy();
+    
+    // Initialize Details button functionality
+    initializeDetailsButton();
+}
+
+// Toggle Collapsible Container
+function toggleCollapsible(content, toggle, card) {
+    const isCollapsed = content.style.display === 'none';
+    
+    if (isCollapsed) {
+        // Expand
+        content.style.display = 'block';
+        content.classList.remove('collapsed');
+        card?.classList.remove('collapsed');
+        toggle.innerHTML = '<i class="fas fa-chevron-up"></i>';
+    } else {
+        // Collapse
+        content.style.display = 'none';
+        content.classList.add('collapsed');
+        card?.classList.add('collapsed');
+        toggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
+    }
+}
+
+// Show Example Results
+function showExampleResults() {
+    const searchResults = document.getElementById('searchResults');
+    if (!searchResults) return;
+    
+    const exampleData = {
+        mirna_name: 'hsa-let-7a',
+        organism: 'Human',
+        genome_version: 'GRCh38/hg38',
+        tss_count: 3,
+        chromosome: 'chr9',
+        strand: '+',
+        coordinates: '94175877-94175977',
+        expression_level: 'High',
+        confidence_score: 0.95
+    };
+    
+    const resultsHtml = `
+        <div class="result-card">
+            <div class="result-header">
+                <div>
+                    <div class="result-title">${exampleData.mirna_name}</div>
+                    <div class="result-subtitle">${exampleData.organism} (${exampleData.genome_version})</div>
+                </div>
+                <div class="result-badge">Example Result</div>
+            </div>
+            <div class="result-details">
+                <div class="detail-item">
+                    <span class="detail-label">TSS Count</span>
+                    <span class="detail-value">${exampleData.tss_count}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Chromosome</span>
+                    <span class="detail-value">${exampleData.chromosome}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Strand</span>
+                    <span class="detail-value">${exampleData.strand}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Coordinates</span>
+                    <span class="detail-value">${exampleData.coordinates}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Expression Level</span>
+                    <span class="detail-value">${exampleData.expression_level}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Confidence Score</span>
+                    <span class="detail-value">${exampleData.confidence_score}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    searchResults.innerHTML = resultsHtml;
+    searchResults.style.display = 'block';
 }
 
 // Organism Selection
@@ -387,62 +585,92 @@ function initializeAnimations() {
     });
 }
 
-// Show notification (if not available from base script)
-function showNotification(message, type = 'info', duration = 3000) {
-    // Check if notification function is available from base script
-    if (window.BaseLayout && window.BaseLayout.showNotification) {
-        window.BaseLayout.showNotification(message, type, duration);
-        return;
-    }
 
-    // Fallback notification implementation
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
 
-    // Style the notification
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        z-index: 10000;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        max-width: 300px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    `;
-
-    // Set background color based on type
-    const colors = {
-        info: '#8ab4f8',
-        success: '#34a853',
-        warning: '#fbbc04',
-        error: '#ea4335'
-    };
-
-    notification.style.backgroundColor = colors[type] || colors.info;
-
-    // Add to page
-    document.body.appendChild(notification);
-
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-
-    // Remove after duration
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
+// Initialize Click-to-Copy Functionality
+function initializeClickToCopy() {
+    const infoValues = document.querySelectorAll('.info-value');
+    
+    infoValues.forEach(element => {
+        element.addEventListener('click', function() {
+            const textToCopy = this.textContent.trim();
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopySuccess(this);
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(textToCopy, this);
+                });
+            } else {
+                fallbackCopyTextToClipboard(textToCopy, this);
             }
-        }, 300);
-    }, duration);
+        });
+    });
+}
+
+// Show Copy Success
+function showCopySuccess(element) {
+    element.classList.add('copied');
+    element.textContent = element.textContent + ' ✓';
+    
+    setTimeout(() => {
+        element.classList.remove('copied');
+        element.textContent = element.textContent.replace(' ✓', '');
+    }, 2000);
+}
+
+// Fallback Copy Function
+function fallbackCopyTextToClipboard(text, element) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopySuccess(element);
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Initialize Details Button Functionality
+function initializeDetailsButton() {
+    const detailsBtn = document.getElementById('mainTssDetails');
+    
+    if (detailsBtn) {
+        detailsBtn.addEventListener('click', function() {
+            showMainTssDetails();
+        });
+    }
+}
+
+// Show Main TSS Details
+function showMainTssDetails() {
+    const supportingEvidence = document.getElementById('supportingEvidence');
+    const detailsBtn = document.getElementById('mainTssDetails');
+    
+    if (supportingEvidence && detailsBtn) {
+        const isVisible = supportingEvidence.style.display !== 'none';
+        
+        if (isVisible) {
+            // Hide the section
+            supportingEvidence.style.display = 'none';
+            detailsBtn.innerHTML = '<i class="fas fa-info-circle"></i> Details';
+            detailsBtn.classList.remove('active');
+        } else {
+            // Show the section
+            supportingEvidence.style.display = 'block';
+            detailsBtn.innerHTML = '<i class="fas fa-times"></i> Hide Details';
+            detailsBtn.classList.add('active');
+        }
+    }
 }
 
 // Export functions for use in other scripts

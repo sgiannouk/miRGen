@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}miRGen Database - Your friendly portal to miRNA TSS data{% endblock %}
+{% block title %}miRGen Database{% endblock %}
 
 {% block content %}
 <section class="hero-section">
@@ -15,10 +15,10 @@
         <h1 class="hero-title">miRGen Database</h1>
 
         <!-- Hero Subtitle -->
-        <p class="hero-subtitle">Your friendly portal to miRNA TSS data</p>
+        <p class="hero-subtitle">Explore comprehensive miRNA TSS annotations</p>
 
         <!-- Search Container -->
-        <div class="search-container">
+        <div class="search-container collision-container" id="searchContainer">
             <form class="search-form" id="searchForm">
                 <!-- Organism and miRNA Name Row -->
                 <div class="form-row">
@@ -28,7 +28,6 @@
                         <select id="organism" name="organism" required>
                             <option value="human_GRCh38" data-display="Human" selected>Human (GRCh38/hg38)</option>
                             <option value="mouse_GRCm39" data-display="Mouse">Mouse (GRCm39/mm39)</option>
-                            <option value="mouse_GRCm38" data-display="Mouse">Mouse (GRCm38/mm10)</option>
                         </select>
                     </div>
 
@@ -46,20 +45,239 @@
                     </div>
                 </div>
 
-                <!-- Search Button -->
-                <button type="submit" class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i>
-                    Search
-                </button>
-            </form>
+                <!-- Buttons Row -->
+                <div class="buttons-row">
+                    <!-- Search Button -->
+                    <button type="submit" class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
 
-            <!-- Search Results Container -->
-            <div class="search-results" id="searchResults" style="display: none;">
-                <!-- Results will be dynamically loaded here -->
-            </div>
+                    <!-- Example Button -->
+                    <button type="button" class="example-btn" id="exampleBtn">
+                        <i class="fas fa-lightbulb"></i>
+                        Try Example
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </section>
+
+
+
+<!-- Search Results Container - Moved outside hero section -->
+<div class="search-results" id="searchResults" style="display: none;">
+    <!-- Basic Information -->
+    <div class="result-card">
+        <div class="result-header">
+            <h3 class="result-title">Basic Information for <span id="mirnaDisplayName">hsa-let-7a-5p</span></h3>
+        </div>
+        <div class="result-content">
+            <div class="info-table">
+                <div class="info-row">
+                    <span class="info-label">Full Name:</span>
+                    <span class="info-value" id="fullName">Homo sapiens let-7a-5p</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Sequence:</span>
+                    <span class="info-value" id="sequence">UGAGGUAGUAGGUUGUAUAGUU</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">miRBase Accession:</span>
+                    <span class="info-value" id="mirbaseAccession">MI0000060</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Genome Browser View -->
+    <div class="result-card">
+        <div class="result-header">
+            <h3 class="result-title">Genome Browser View</h3>
+        </div>
+        <div class="result-content">
+            <div class="genome-view">
+                <div class="genome-track">
+                    <div class="tss-block main-tss" title="Main TSS">
+                        <span class="tss-label">Main TSS</span>
+                    </div>
+                    <div class="tss-block alt-tss" title="Alt TSS 1">
+                        <span class="tss-label">Alt TSS 1</span>
+                    </div>
+                    <div class="tss-block alt-tss" title="Alt TSS 2">
+                        <span class="tss-label">Alt TSS 2</span>
+                    </div>
+                </div>
+                <div class="tf-track">
+                    <div class="tf-block" title="MYC">
+                        <span class="tf-label">MYC</span>
+                    </div>
+                    <div class="tf-block" title="SP1">
+                        <span class="tf-label">SP1</span>
+                    </div>
+                    <div class="tf-block" title="CTCF">
+                        <span class="tf-label">CTCF</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main TSS -->
+    <div class="result-card">
+        <div class="result-header">
+            <h3 class="result-title">
+                <i class="fas fa-map-marker-alt" style="color: #6f42c1;"></i>
+                Main TSS
+            </h3>
+            <button class="details-btn" id="mainTssDetails">
+                <i class="fas fa-info-circle"></i>
+                Details
+            </button>
+        </div>
+        <div class="result-content">
+            <div class="data-table">
+                <div class="table-header">
+                    <div class="table-cell">Chromosome</div>
+                    <div class="table-cell">Start</div>
+                    <div class="table-cell">End</div>
+                    <div class="table-cell">Strand</div>
+                </div>
+                <div class="table-row" id="mainTssData">
+                    <div class="table-cell">chr9</div>
+                    <div class="table-cell">95,111,162</div>
+                    <div class="table-cell">95,111,244</div>
+                    <div class="table-cell">+</div>
+                </div>
+            </div>
+            
+            <!-- Supporting Evidence Details Section -->
+            <div class="supporting-evidence" id="supportingEvidence" style="display: none;">
+                <h4>Supporting Evidence Details</h4>
+                <div class="evidence-list">
+                    <div class="evidence-item">
+                        <span class="evidence-label">CAGE Samples:</span>
+                        <span class="evidence-value">42</span>
+                    </div>
+                    <div class="evidence-item">
+                        <span class="evidence-label">RNA-Seq Samples:</span>
+                        <span class="evidence-value">15</span>
+                    </div>
+                    <div class="evidence-item">
+                        <span class="evidence-label">Observed in:</span>
+                        <span class="evidence-value">HCT116, MCF7, A549</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative TSSs -->
+    <div class="result-card collapsible-card">
+        <div class="result-header collapsible-header" id="altTssHeader">
+            <h3 class="result-title">
+                <i class="fas fa-flask" style="color: #e83e8c;"></i>
+                Alternative TSSs
+            </h3>
+            <button class="collapse-btn" id="altTssToggle">
+                <i class="fas fa-chevron-up"></i>
+            </button>
+        </div>
+        <div class="result-content collapsible-content" id="altTssContent" style="display: block;">
+            <div class="data-table">
+                <div class="table-header">
+                    <div class="table-cell">Chromosome</div>
+                    <div class="table-cell">Start</div>
+                    <div class="table-cell">End</div>
+                    <div class="table-cell">Strand</div>
+                    <div class="table-cell">Supporting Evidence</div>
+                </div>
+                <div class="table-row" id="altTss1">
+                    <div class="table-cell">
+                        <i class="fas fa-chevron-right"></i>
+                        chr9
+                    </div>
+                    <div class="table-cell">95,111,100</div>
+                    <div class="table-cell">95,111,180</div>
+                    <div class="table-cell">+</div>
+                    <div class="table-cell">CAGE</div>
+                </div>
+                <div class="table-row" id="altTss2">
+                    <div class="table-cell">
+                        <i class="fas fa-chevron-right"></i>
+                        chr9
+                    </div>
+                    <div class="table-cell">95,111,300</div>
+                    <div class="table-cell">95,111,380</div>
+                    <div class="table-cell">+</div>
+                    <div class="table-cell">RNA-Seq</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transcription Factors -->
+    <div class="result-card collapsible-card">
+        <div class="result-header collapsible-header" id="tfHeader">
+            <h3 class="result-title">Transcription Factors</h3>
+            <button class="collapse-btn" id="tfToggle">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="result-content collapsible-content" id="tfContent" style="display: none;">
+            <div class="data-table">
+                <div class="table-header">
+                    <div class="table-cell">TF Name</div>
+                    <div class="table-cell">Start</div>
+                    <div class="table-cell">End</div>
+                    <div class="table-cell">Score</div>
+                </div>
+                <div class="table-row" id="tf1">
+                    <div class="table-cell">MYC</div>
+                    <div class="table-cell">95,111,050</div>
+                    <div class="table-cell">95,111,070</div>
+                    <div class="table-cell">0.92</div>
+                </div>
+                <div class="table-row" id="tf2">
+                    <div class="table-cell">SP1</div>
+                    <div class="table-cell">95,111,280</div>
+                    <div class="table-cell">95,111,300</div>
+                    <div class="table-cell">0.88</div>
+                </div>
+                <div class="table-row" id="tf3">
+                    <div class="table-cell">CTCF</div>
+                    <div class="table-cell">95,111,400</div>
+                    <div class="table-cell">95,111,425</div>
+                    <div class="table-cell">0.85</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Resources -->
+    <div class="result-card">
+        <div class="result-header">
+            <h3 class="result-title">External Resources</h3>
+        </div>
+        <div class="result-content">
+            <div class="external-links">
+                <a href="#" class="external-btn" id="mirbaseLink" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    miRBase
+                </a>
+                <a href="#" class="external-btn" id="ensemblLink" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    Ensembl
+                </a>
+                <a href="#" class="external-btn" id="ucscLink" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    UCSC Browser
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_css %}

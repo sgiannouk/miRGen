@@ -57,7 +57,7 @@
 
 /* DIANA Logo Gradient - Horizontal Blue to Green */
 .brand-diana {
-    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    background: linear-gradient(to right, #4A7B9D, #9AA899) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -65,7 +65,7 @@
 }
 
 .brand-tools {
-    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    background: linear-gradient(to right, #4A7B9D, #9AA899) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -73,7 +73,7 @@
 }
 
 .diana-toolbar .brand-diana {
-    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    background: linear-gradient(to right, #4A7B9D, #9AA899) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -81,7 +81,7 @@
 }
 
 .diana-toolbar .brand-tools {
-    background: linear-gradient(to right, #8ab4f8, #34a853) !important;
+    background: linear-gradient(to right, #4A7B9D, #9AA899) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -96,10 +96,14 @@
     gap: 2rem;
 }
 
-.toolbar-link {
+/* Override global link styles for toolbar - Maximum specificity */
+.diana-toolbar .toolbar-nav .toolbar-link,
+.diana-toolbar .toolbar-nav a.toolbar-link,
+.diana-toolbar .toolbar-nav a,
+.diana-toolbar .toolbar-nav .toolbar-link {
     background: #313135 !important;
-    color: #9aa0a6 !important;
-    text-decoration: none;
+    color: #e8eaed !important; /* Much lighter color for visibility */
+    text-decoration: none !important;
     font-weight: 500;
     font-size: 0.875rem;
     padding: 0.25rem 0.6rem;
@@ -109,10 +113,14 @@
     align-items: center;
 }
 
-.toolbar-link:hover {
+.diana-toolbar .toolbar-nav .toolbar-link:hover,
+.diana-toolbar .toolbar-nav a.toolbar-link:hover,
+.diana-toolbar .toolbar-nav a:hover,
+.diana-toolbar .toolbar-nav .toolbar-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #e8eaed !important;
+    color: #ffffff !important; /* Pure white on hover */
     transform: translateY(-1px);
+    text-decoration: none !important;
 }
 
 /* Dropdown Button */
@@ -121,9 +129,13 @@
     z-index: 10001;
 }
 
-.toolbar-dropdown-btn {
+/* Override global button styles for toolbar - Maximum specificity */
+.diana-toolbar .toolbar-dropdown .toolbar-dropdown-btn,
+.diana-toolbar .toolbar-dropdown button.toolbar-dropdown-btn,
+.diana-toolbar .toolbar-dropdown button,
+.diana-toolbar .toolbar-dropdown .toolbar-dropdown-btn {
     background: #313135 !important;
-    color: #9aa0a6 !important;
+    color: #e8eaed !important; /* Much lighter color for visibility */
     border: none;
     font-weight: 500;
     font-size: 0.875rem;
@@ -138,9 +150,12 @@
     pointer-events: auto !important;
 }
 
-.toolbar-dropdown-btn:hover {
+.diana-toolbar .toolbar-dropdown .toolbar-dropdown-btn:hover,
+.diana-toolbar .toolbar-dropdown button.toolbar-dropdown-btn:hover,
+.diana-toolbar .toolbar-dropdown button:hover,
+.diana-toolbar .toolbar-dropdown .toolbar-dropdown-btn:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #e8eaed !important;
+    color: #ffffff !important; /* Pure white on hover */
 }
 
 .dropdown-icon {
@@ -549,17 +564,28 @@
 /* Contact Form */
 .contact-form {
     color: white;
+    font-family: inherit; /* Use the same font as About section */
+    line-height: 1.7; /* Same line height as About */
 }
 
 .contact-form .form-group {
     margin-bottom: 1.5rem;
 }
 
-.contact-form label {
+/* Maximum specificity for contact form labels */
+.contact-form label,
+.modal-container .contact-form label,
+.modal-overlay .contact-form label,
+.diana-toolbar .contact-form label,
+.modal-container .form-group label,
+.modal-overlay .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: white;
-    font-weight: 500;
+    margin-bottom: 0.1rem; /* Reduced from 0.25rem to bring labels even closer to inputs */
+    color: #ffffff !important; /* Pure white for maximum visibility */
+    font-weight: 400 !important; /* Changed from 600 to 400 for normal weight */
+    font-size: 1rem; /* Same size as About section */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Add shadow for better contrast */
+    font-family: inherit; /* Use the same font as About section */
 }
 
 .contact-form input,
@@ -572,6 +598,7 @@
     background: rgba(255, 255, 255, 0.1);
     color: white;
     font-size: 1rem;
+    font-family: inherit; /* Use the same font as About section */
     transition: all 0.2s ease;
 }
 
@@ -587,6 +614,7 @@
 .contact-form textarea {
     resize: vertical;
     min-height: 120px;
+    font-family: inherit; /* Use the same font as About section */
 }
 
 .contact-form .form-actions {
@@ -601,6 +629,7 @@
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 500;
+    font-family: inherit; /* Use the same font as About section */
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;

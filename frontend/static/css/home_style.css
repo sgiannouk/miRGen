@@ -6,9 +6,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem; /* Reduced padding */
+    padding: 0.5rem; /* Reduced top padding */
     text-align: center;
     padding-bottom: 2rem; /* Add bottom padding to account for fixed footer */
+    margin-top: -1rem; /* Reduce top margin */
 }
 
 .hero-content {
@@ -53,15 +54,135 @@
 /* Search Container */
 .search-container {
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem; /* Increased padding back */
-    max-width: 700px; /* Increased from 500px to accommodate side-by-side fields */
-    width: 100%; /* Ensure it doesn't exceed container */
+    padding: 2rem;
+    max-width: 600px; /* Fixed width for search container */
+    width: 600px; /* Fixed width to prevent expansion */
     margin: 0 auto;
-    border: 1px solid rgba(138, 180, 248, 0.1);
-    box-sizing: border-box; /* Include padding in width calculation */
+    position: relative;
+    overflow: visible; /* Changed from hidden to allow results to be separate */
+    box-sizing: border-box;
 }
+
+/* Collision Container - Removed collision effect */
+.collision-container {
+    transition: all 0.3s ease;
+}
+
+.collision-container:hover {
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    transform: rotateX(2deg) rotateY(-1deg) translateY(-1px); /* Gentle nod effect */
+}
+
+/* Search Button */
+.search-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.75rem 2.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 200px;
+    height: 44px;
+    /* No transitions, transforms, or effects */
+    transition: none;
+    transform: none;
+    box-shadow: none;
+}
+
+.search-btn:hover {
+    /* No hover effects */
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: none;
+    box-shadow: none;
+}
+
+.search-btn:active {
+    /* No active effects */
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: none;
+    box-shadow: none;
+}
+
+.search-btn:focus {
+    /* No focus effects */
+    outline: none;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: none;
+    box-shadow: none;
+}
+
+.search-btn i {
+    font-size: 0.9rem; /* Slightly smaller icon */
+}
+
+/* Form Collision Effect - Removed */
+/* .form-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.form-particles::before,
+.form-particles::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: rgba(102, 126, 234, 0.6);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.collision-container:hover .form-particles::before {
+    animation: formParticle1 0.8s ease-out forwards;
+}
+
+.collision-container:hover .form-particles::after {
+    animation: formParticle2 0.8s ease-out forwards;
+}
+
+@keyframes formParticle1 {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(-30px, -30px) scale(0);
+    }
+}
+
+@keyframes formParticle2 {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translate(30px, -30px) scale(0);
+    }
+} */
 
 /* Search Form */
 .search-form {
@@ -73,7 +194,7 @@
 /* Form Row for side-by-side fields */
 .form-row {
     display: grid;
-    grid-template-columns: 0.6fr 1fr; /* Organism takes 0.6, miRNA takes 1 */
+    grid-template-columns: 0.7fr 1fr; /* Organism takes 0.7, miRNA takes 1 - made organism wider */
     gap: 1.5rem; /* Increased gap for better spacing */
 }
 
@@ -120,51 +241,81 @@
     width: 100%;
 }
 
-/* Search Button - Match miRGen logo color */
-.search-btn {
-    background: linear-gradient(135deg, #8ab4f8, #34a853); /* Same as miRGen logo */
-    color: white;
-    border: none;
-    padding: 1rem 2rem; /* Back to original padding */
-    border-radius: 8px;
-    font-size: 1.1rem; /* Back to original font size */
-    font-weight: 600;
+/* Input with Search Button */
+.input-with-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.input-with-search input {
+    flex: 1;
+}
+
+/* Example Button Row */
+.example-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+/* Buttons Row */
+.buttons-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center; /* Center the buttons */
+    align-items: center;
+    margin-top: 0.5rem; /* Move even closer to forms */
+    padding-right: 0; /* Remove right padding since we're centering */
+}
+
+
+
+/* Example Button */
+.example-btn {
+    background: rgba(255, 255, 255, 0.7);
+    color: #8a9aa8;
+    border: 1px solid #e1e5e9;
+    padding: 0.75rem 1.25rem; /* Match search button height */
+    border-radius: 6px; /* Match search button radius */
+    font-size: 0.9rem;
+    font-weight: 400;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 0.5rem; /* Back to original margin */
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    backdrop-filter: blur(10px);
+    opacity: 0.8;
+    height: 44px; /* Fixed height to match search button */
 }
 
-.search-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(138, 180, 248, 0.3);
+.example-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border-color: #667eea;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    opacity: 1;
 }
 
-.search-btn:active {
+.example-btn:active {
     transform: translateY(0);
 }
 
-.search-btn i {
-    font-size: 1rem; /* Back to original size */
+.example-btn i {
+    font-size: 0.8rem;
 }
 
-/* Loading State */
+/* Loading State - Removed spinning animation */
 .search-btn.loading {
     pointer-events: none;
     opacity: 0.8;
 }
 
-.search-btn.loading i {
-    animation: spin 1s linear infinite;
-}
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
 
 /* Search Results */
 .search-results {
@@ -185,7 +336,6 @@
 }
 
 .result-card:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
@@ -277,20 +427,391 @@
     text-align: center;
 }
 
+/* Search Results Styles */
+.search-results {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1.5rem;
+    max-width: 4000px !important; /* Force override with !important */
+    margin-left: auto;
+    margin-right: auto;
+    width: 80vw !important; /* Increased from 60vw to 80vw */
+    position: relative; /* Ensure it's separate from search container */
+    /* Override any container constraints */
+    min-width: 80vw !important; /* Increased from 60vw to 80vw */
+}
+
+/* Override any container constraints */
+.search-results .result-card {
+    max-width: none !important;
+    width: 100% !important;
+    min-width: 80vw !important; /* Increased from 60vw to 80vw */
+}
+
+/* Force all result cards to be wide */
+.result-card {
+    max-width: none !important;
+    width: 100% !important;
+    min-width: 80vw !important; /* Increased from 60vw to 80vw */
+}
+
+/* Ensure search container doesn't expand */
+.search-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 600px; /* Fixed width for search container */
+    width: 600px; /* Fixed width to prevent expansion */
+    margin: 0 auto;
+    position: relative;
+    overflow: visible; /* Changed from hidden to allow results to be separate */
+    box-sizing: border-box;
+}
+
+.result-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.result-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.result-header {
+    background: transparent; /* Removed grey background */
+    padding: 0.75rem 0; /* Reduced from 1.25rem to 0.75rem */
+    border-bottom: none; /* Removed border line */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0; /* Align more to the left */
+}
+
+.result-title {
+    margin: 0;
+    font-size: 1.4rem; /* Increased from 1.25rem */
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* miRNA name color in Basic Information */
+.result-title #mirnaDisplayName {
+    color: #00809D;
+    font-weight: 700;
+}
+
+.result-content {
+    padding: 0.5rem 0; /* Reduced from 1.5rem to bring content closer to titles */
+}
+
+/* Basic Information Styles */
+.info-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 150px;
+    margin-right: 1rem;
+    font-size: 1.05rem; /* Increased from default */
+}
+
+.info-value {
+    color: #6c757d;
+    font-family: 'Courier New', monospace;
+    font-size: 1.05rem; /* Increased from 0.95rem */
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    user-select: all;
+}
+
+.info-value:hover {
+    background: rgba(0, 128, 157, 0.1);
+    color: #00809D;
+}
+
+.info-value.copied {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+/* Genome Browser View Styles */
+.genome-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.genome-track {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    position: relative;
+}
+
+.tss-block {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    position: relative;
+    min-width: 80px;
+    text-align: center;
+}
+
+.tss-block.main-tss {
+    background: linear-gradient(135deg, #6f42c1, #5a32a3);
+}
+
+.tss-block.alt-tss {
+    background: linear-gradient(135deg, #e83e8c, #d63384);
+}
+
+.tss-label {
+    font-size: 0.8rem;
+}
+
+.tf-track {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #fff3cd;
+    border-radius: 6px;
+}
+
+.tf-block {
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, #fd7e14, #e55a00);
+    color: white;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    min-width: 60px;
+    text-align: center;
+}
+
+.tf-label {
+    font-size: 0.75rem;
+}
+
+/* Data Table Styles */
+.data-table {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: none; /* Removed border */
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    background: rgba(108, 117, 125, 0.05); /* Very subtle background */
+    color: #495057;
+    font-weight: 700; /* Made bold */
+    font-size: 0.95rem; /* Increased from 0.85rem */
+    border-bottom: none; /* Removed border */
+}
+
+.table-header:has(+ .table-row:has(.table-cell:nth-child(5))) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.table-cell {
+    padding: 0.6rem 0.8rem; /* Reduced padding */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-right: none; /* Removed vertical borders */
+    font-size: 0.95rem; /* Increased from 0.85rem */
+}
+
+.table-cell:last-child {
+    border-right: none;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    background: white;
+    border-bottom: none; /* Removed horizontal borders */
+    transition: background-color 0.2s ease;
+}
+
+.table-row:has(.table-cell:nth-child(5)) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.table-row:hover {
+    background: rgba(0, 0, 0, 0.02); /* Very subtle hover */
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-row .table-cell {
+    color: #495057;
+    font-size: 0.95rem; /* Increased from 0.85rem */
+    border-right: none; /* Removed vertical borders */
+}
+
+.table-row .table-cell:last-child {
+    border-right: none;
+}
+
+.table-row .table-cell i {
+    color: #6c757d;
+    font-size: 0.8rem; /* Increased from 0.7rem */
+}
+
+/* Details Button */
+.details-btn {
+    background: transparent;
+    color: #6c757d;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0.7;
+}
+
+.details-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #495057;
+    opacity: 1;
+}
+
+.details-btn i {
+    font-size: 0.8rem;
+}
+
+.details-btn.active {
+    background: rgba(0, 0, 0, 0.1);
+    color: #495057;
+    opacity: 1;
+}
+
+/* External Links */
+.external-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.external-btn {
+    background: #00809D; /* Changed to the requested color */
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem; /* Reduced padding to make thinner */
+    border-radius: 6px; /* Reduced border radius */
+    font-weight: 500;
+    font-size: 0.9rem; /* Slightly smaller font */
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 128, 157, 0.2); /* Updated shadow color */
+}
+
+.external-btn:hover {
+    background: #006d85; /* Darker shade for hover */
+    transform: translateY(-1px); /* Reduced lift effect */
+    box-shadow: 0 4px 12px rgba(0, 128, 157, 0.3); /* Updated shadow */
+    color: white;
+    text-decoration: none;
+}
+
+.external-btn i {
+    font-size: 0.85rem; /* Slightly smaller icon */
+}
+
+/* Supporting Evidence Section */
+.supporting-evidence {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.supporting-evidence h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem; /* Increased from 1.1rem */
+    font-weight: 600;
+    color: #495057;
+}
+
+.evidence-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.evidence-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.evidence-label {
+    font-weight: 500;
+    color: #495057;
+    min-width: 120px;
+    font-size: 1.05rem; /* Increased from default */
+}
+
+.evidence-value {
+    color: #6c757d;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem; /* Increased from 0.9rem */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-section {
-        padding: 0.75rem; /* Reduced padding */
-        min-height: calc(100vh - 90px - 35px); /* Adjusted for fixed footer */
-        padding-bottom: 1.5rem; /* Add bottom padding for mobile */
+        padding: 2rem 1rem;
+        min-height: auto;
     }
 
     .hero-content {
-        max-width: 100%; /* Full width on mobile */
+        gap: 1.5rem;
     }
 
     .hero-title {
-        font-size: 2rem; /* Smaller on mobile */
+        font-size: 2rem;
     }
 
     .hero-subtitle {
@@ -298,19 +819,91 @@
     }
 
     .search-container {
-        padding: 2rem 1.5rem; /* Back to original padding */
-        margin: 0 1rem; /* Back to original margin */
-        max-width: none; /* Allow full width on mobile */
+        padding: 1.5rem;
+        max-width: 100%;
+        width: 100%;
+        margin: 0 1rem;
     }
 
     .hero-icon {
-        font-size: 2.5rem; /* Smaller on mobile */
+        font-size: 2.5rem;
     }
 
-    /* Stack form fields vertically on mobile */
     .form-row {
-        grid-template-columns: 1fr; /* Single column on mobile */
-        gap: 1.5rem; /* Back to original gap */
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .buttons-row {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .search-btn,
+    .example-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .search-results {
+        gap: 1rem;
+        margin-top: 1.5rem;
+        max-width: 100%;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    
+    .result-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+    
+    .result-content {
+        padding: 1rem;
+    }
+    
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .info-label {
+        min-width: auto;
+        margin-right: 0;
+    }
+    
+    .genome-track,
+    .tf-track {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .table-cell {
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 0.5rem;
+    }
+    
+    .table-cell:last-child {
+        border-bottom: none;
+    }
+    
+    .external-links {
+        flex-direction: column;
+    }
+    
+    .external-btn {
+        justify-content: center;
     }
 }
 
@@ -333,8 +926,71 @@
         padding: 0.75rem 0.875rem; /* Back to original padding */
     }
 
-    .search-btn {
+    .search-btn,
+    .example-btn {
         padding: 0.875rem 1.5rem; /* Back to original padding */
         font-size: 1rem; /* Back to original font size */
     }
+} 
+
+/* Collapsible Card Styles */
+.collapsible-card {
+    transition: all 0.3s ease;
+}
+
+.collapsible-header {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.collapsible-header:hover {
+    background: linear-gradient(135deg, #e9ecef, #dee2e6);
+}
+
+.collapse-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collapse-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #495057;
+}
+
+.collapse-btn i {
+    transition: transform 0.3s ease;
+}
+
+.collapsible-card.collapsed .collapse-btn i {
+    transform: rotate(-90deg);
+}
+
+.collapsible-content {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+}
+
+/* Make collapsed containers shorter */
+.collapsible-card.collapsed .result-header {
+    padding: 0.5rem 0; /* Reduced padding when collapsed */
+}
+
+.collapsible-card.collapsed .result-content {
+    padding: 0; /* No padding when collapsed */
 } 

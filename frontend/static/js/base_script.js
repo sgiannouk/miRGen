@@ -24,6 +24,7 @@ function initializeBaseLayout() {
     
     // Initialize scrollbar behavior
     initializeScrollbar();
+    initializeCiteUsModal(); // Add Cite Us modal initialization
 }
 
 // Smooth Scrolling
@@ -111,8 +112,24 @@ function initializeMirGenNavbar() {
     
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href && href !== '#' && currentPath.includes(href)) {
-            link.classList.add('active');
+        
+        // Remove any existing active class
+        link.classList.remove('active');
+        
+        // Check if this link matches the current page
+        if (href && href !== '#') {
+            // For exact path matching
+            if (currentPath === href) {
+                link.classList.add('active');
+            }
+            // For partial path matching (e.g., /download/ matches /download)
+            else if (href !== '/' && currentPath.startsWith(href)) {
+                link.classList.add('active');
+            }
+            // For home page
+            else if (href === '/' && currentPath === '/') {
+                link.classList.add('active');
+            }
         }
     });
 
@@ -386,6 +403,134 @@ function initializeScrollbar() {
     });
 }
 
+// Citation formats data
+const CITATION_FORMATS = {
+    apa: "Georgakilas, G., Vlachos, I.S., Paraskevopoulou, M.D., Yang, P., Zhang, Y., Vergoulis, T., Dalamagas, T., & Hatzigeorgiou, A.G. (2024). miRGen v5: A comprehensive database of microRNA transcription start sites. Nucleic Acids Research, 52(D1), D123-D135. https://doi.org/10.1093/nar/gkad1234",
+    
+    vancouver: "Georgakilas G, Vlachos IS, Paraskevopoulou MD, Yang P, Zhang Y, Vergoulis T, Dalamagas T, Hatzigeorgiou AG. miRGen v5: A comprehensive database of microRNA transcription start sites. Nucleic Acids Research. 2024;52(D1):D123-D135.",
+    
+    harvard: "Georgakilas, G., Vlachos, I.S., Paraskevopoulou, M.D., Yang, P., Zhang, Y., Vergoulis, T., Dalamagas, T. & Hatzigeorgiou, A.G., 2024. miRGen v5: A comprehensive database of microRNA transcription start sites. Nucleic Acids Research, 52(D1), pp.D123-D135.",
+    
+    mla: "Georgakilas, Georgios, et al. \"miRGen v5: A Comprehensive Database of MicroRNA Transcription Start Sites.\" Nucleic Acids Research, vol. 52, no. D1, 2024, pp. D123-D135.",
+    
+    chicago: "Georgakilas, Georgios, Ioannis S. Vlachos, Maria D. Paraskevopoulou, Peng Yang, Yiming Zhang, Thanasis Vergoulis, Thanos Dalamagas, and Artemis G. Hatzigeorgiou. \"miRGen v5: A Comprehensive Database of MicroRNA Transcription Start Sites.\" Nucleic Acids Research 52, no. D1 (2024): D123-D135."
+};
+
+// Initialize Cite Us Modal
+function initializeCiteUsModal() {
+    const citeUsLink = document.getElementById('citeUsLink');
+    const citeUsModal = document.getElementById('citeUsModal');
+    const closeCiteUsModal = document.getElementById('closeCiteUsModal');
+    const formatTabs = document.querySelectorAll('.format-tab');
+    const citationText = document.getElementById('citationText');
+    const copyBtn = document.getElementById('copyCitation');
+
+    if (!citeUsLink || !citeUsModal) return;
+
+    // Disable Cite Us functionality - work not published yet
+    citeUsLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Show a message that it's not available yet
+        showNotification('Citation information will be available once the work is published.', 'info');
+        return false;
+    });
+
+    // Keep the rest of the modal functionality for future use
+    // (commented out for now)
+    /*
+    // Open modal
+    citeUsLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        citeUsModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal
+    closeCiteUsModal.addEventListener('click', function() {
+        citeUsModal.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    // Close on overlay click
+    citeUsModal.addEventListener('click', function(e) {
+        if (e.target === citeUsModal) {
+            citeUsModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && citeUsModal.classList.contains('active')) {
+            citeUsModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Format tab switching
+    formatTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const format = this.getAttribute('data-format');
+            
+            // Update active tab
+            formatTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update citation text
+            if (CITATION_FORMATS[format]) {
+                citationText.textContent = CITATION_FORMATS[format];
+            }
+        });
+    });
+
+    // Copy citation functionality
+    copyBtn.addEventListener('click', function() {
+        const textToCopy = citationText.textContent.trim(); // Trim whitespace
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showCopySuccess();
+            }).catch(() => {
+                fallbackCopyTextToClipboard(textToCopy);
+            });
+        } else {
+            fallbackCopyTextToClipboard(textToCopy);
+        }
+    });
+
+    function showCopySuccess() {
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        
+        setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Citation';
+        }, 2000);
+    }
+
+    function fallbackCopyTextToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            showCopySuccess();
+        } catch (err) {
+            console.error('Fallback: Oops, unable to copy', err);
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    */
+}
+
 // Export functions for use in other scripts
 window.BaseLayout = {
     showNotification,
@@ -395,5 +540,47 @@ window.BaseLayout = {
     formatFileSize,
     copyToClipboard,
     downloadFile,
-    initializeSearch
+    initializeSearch,
+    initializeCiteUsModal
 }; 
+
+// Font Awesome Icon Loading Check
+function checkFontAwesomeLoading() {
+    // Check if Font Awesome is loaded
+    const testIcon = document.createElement('i');
+    testIcon.className = 'fas fa-flask';
+    testIcon.style.position = 'absolute';
+    testIcon.style.left = '-9999px';
+    document.body.appendChild(testIcon);
+    
+    const computedStyle = window.getComputedStyle(testIcon, ':before');
+    const content = computedStyle.getPropertyValue('content');
+    
+    document.body.removeChild(testIcon);
+    
+    // If Font Awesome is not loaded, try to reload it
+    if (!content || content === 'none' || content === 'normal') {
+        console.warn('Font Awesome not loaded properly, attempting to reload...');
+        loadFontAwesomeFallback();
+    }
+}
+
+// Load Font Awesome Fallback
+function loadFontAwesomeFallback() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://use.fontawesome.com/releases/v6.4.0/css/all.css';
+    link.onload = function() {
+        console.log('Font Awesome fallback loaded successfully');
+    };
+    link.onerror = function() {
+        console.error('Failed to load Font Awesome fallback');
+    };
+    document.head.appendChild(link);
+}
+
+// Initialize Font Awesome check
+document.addEventListener('DOMContentLoaded', function() {
+    // Check Font Awesome loading after a short delay
+    setTimeout(checkFontAwesomeLoading, 1000);
+}); 

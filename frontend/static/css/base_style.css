@@ -148,13 +148,16 @@ input:focus, select:focus, textarea:focus {
     text-decoration: none;
     font-weight: 700;
     font-size: 1.5rem;
-    color: #333;
+    background: linear-gradient(90deg, #D0D6B5, #EE7674, #987284);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     transition: all 0.3s ease;
-    margin-left: 2.5rem; /* Adjusted for better alignment */
+    margin-left: 2rem; /* Increased to move logo more to the right */
 }
 
 .mirgen-navbar .navbar-brand .mirgen-logo {
-    background: linear-gradient(135deg, #8ab4f8, #34a853);
+    background: linear-gradient(135deg, #667eea, #764ba2); /* New elegant gradient */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -164,39 +167,51 @@ input:focus, select:focus, textarea:focus {
 .mirgen-navbar .navbar-nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem; /* Reduced gap between tabs to bring them closer */
+    margin-right: 0.5rem; /* Reduced right margin */
+    margin-left: 2rem; /* Reduced left margin to bring tabs more to the left */
 }
 
 .mirgen-navbar .nav-link {
-    color: #666 !important;
+    color: #6b7280;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
+    padding: 0.5rem 1rem; /* Reduced vertical padding to make highlights more narrow */
+    border-radius: 8px;
     transition: all 0.3s ease;
     position: relative;
+    margin-top: 0.5rem; /* Add top margin to create space from DIANA navbar */
+    margin-bottom: 0.5rem; /* Add bottom margin for consistency */
 }
 
 .mirgen-navbar .nav-link:hover {
-    color: #333 !important;
-    background: rgba(138, 180, 248, 0.1);
+    color: #374151;
+    background: rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
 }
 
 .mirgen-navbar .nav-link.active {
-    color: #333 !important;
-    background: rgba(138, 180, 248, 0.15);
+    color: #374151; /* Darker text instead of white */
+    background: rgba(59, 130, 246, 0.08); /* Much more subtle background */
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15); /* Lighter shadow */
+    transform: translateY(-1px); /* Reduced lift effect */
+    border: none; /* Removed border */
 }
 
-/* Special styling for "Cite Us" link */
-.mirgen-navbar .nav-link:last-child {
-    color: #A2AADB !important;
+/* Special styling for "Cite Us" link - using specific ID */
+.mirgen-navbar .nav-link#citeUsLink {
+    color: #9ca3af !important; /* Grayed out color */
     font-weight: 600;
+    cursor: not-allowed !important; /* Show disabled cursor */
+    opacity: 0.6; /* Make it look disabled */
+    pointer-events: none; /* Disable all interactions */
 }
 
-.mirgen-navbar .nav-link:last-child:hover {
-    color: #8a9adb !important;
-    background: rgba(162, 170, 219, 0.1);
+.mirgen-navbar .nav-link#citeUsLink:hover {
+    color: #9ca3af !important; /* Keep same gray color on hover */
+    background: transparent !important; /* No background on hover */
+    opacity: 0.6; /* Keep same opacity */
 }
 
 /* Main Content Area */
@@ -430,4 +445,257 @@ h1, h2, h3, h4, h5, h6 {
     .lead {
         font-size: 1.1rem;
     }
+} 
+
+/* Cite Us Modal Styles */
+.cite-us-modal {
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #ffffff !important; /* Force light background */
+    border: 1px solid #e9ecef;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    color: #2c3e50 !important; /* Force dark text */
+}
+
+.cite-us-modal .modal-header {
+    background: #ffffff !important; /* Light header background */
+    border-bottom: 1px solid #e9ecef;
+    color: #2c3e50 !important; /* Dark text */
+}
+
+.cite-us-modal .modal-title {
+    color: #2c3e50 !important; /* Dark title */
+    font-weight: 600;
+}
+
+.cite-us-modal .modal-close {
+    color: #2c3e50 !important; /* Dark close button */
+    background: transparent !important;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.cite-us-modal .modal-close:hover {
+    background: transparent !important; /* No background on hover */
+    color: #2c3e50 !important; /* Keep same color on hover */
+}
+
+.cite-us-modal .modal-body {
+    background: #ffffff !important; /* Light body background */
+    color: #2c3e50 !important; /* Dark text */
+    padding: 2rem;
+}
+
+.motivational-text {
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+    border: 1px solid #e1e5ff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.motivational-text p {
+    color: #2c3e50; /* Dark text */
+    font-size: 1.1rem; /* Slightly larger */
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 500; /* Medium weight for better readability */
+}
+
+.motivational-text strong {
+    color: #667eea; /* Purple highlight for emphasis */
+    font-weight: 600; /* Bold for emphasis */
+}
+
+.publication-info {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.publication-info h4 {
+    color: #2c3e50; /* Dark text */
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.paper-details p {
+    margin-bottom: 0.5rem;
+    color: #34495e; /* Dark text */
+    line-height: 1.6;
+}
+
+.paper-details a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.paper-details a:hover {
+    text-decoration: underline;
+}
+
+.citation-formats h4 {
+    color: #2c3e50; /* Dark text */
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.format-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.format-tab {
+    background: #ffffff; /* Light background */
+    border: 1px solid #e9ecef;
+    color: #34495e; /* Dark text */
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.format-tab:hover {
+    background: #f8f9fa;
+    color: #2c3e50; /* Darker text on hover */
+    border-color: #667eea;
+}
+
+.format-tab.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: #667eea;
+}
+
+.citation-content {
+    background: #ffffff; /* Light background */
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.citation-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #2c3e50; /* Dark text */
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f8f9fa; /* Light background */
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    white-space: pre-line; /* Changed from pre-wrap to pre-line to handle line breaks better */
+    word-wrap: break-word;
+    text-align: left; /* Force left alignment */
+    text-indent: 0; /* Remove any indentation */
+    overflow-wrap: break-word;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.copy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+.copy-btn.copied {
+    background: linear-gradient(135deg, #34a853, #28a745);
+}
+
+/* Responsive Design for Cite Us Modal */
+@media (max-width: 768px) {
+    .cite-us-modal {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .format-tabs {
+        gap: 0.25rem;
+    }
+    
+    .format-tab {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .citation-text {
+        font-size: 0.8rem;
+        padding: 0.75rem;
+    }
+    
+    .copy-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+} 
+
+/* Font Awesome Icon Fallbacks */
+.fas, .fa, .far, .fab {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands", "FontAwesome", sans-serif !important;
+    font-weight: 900;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+.far {
+    font-weight: 400;
+}
+
+.fab {
+    font-weight: 400;
+}
+
+/* Ensure icons are visible */
+.fas::before,
+.fa::before,
+.far::before,
+.fab::before {
+    display: inline-block;
+}
+
+/* Icon fallback text for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 } 
