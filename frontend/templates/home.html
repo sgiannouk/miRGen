@@ -45,6 +45,10 @@
                     </div>
                 </div>
 
+                <!-- Hidden fields for future database integration -->
+                <input type="hidden" name="type" value="mirna">
+                <input type="hidden" name="organism" id="organismHidden" value="human_GRCh38">
+
                 <!-- Buttons Row -->
                 <div class="buttons-row">
                     <!-- Search Button -->
@@ -71,21 +75,89 @@
     <!-- Basic Information -->
     <div class="result-card">
         <div class="result-header">
-            <h3 class="result-title">Basic Information for <span id="mirnaDisplayName">hsa-let-7a-5p</span></h3>
+            <h3 class="result-title">
+                <i class='bx bx-info-circle'></i>
+                Basic Information for <span id="mirnaDisplayName">hsa-let-7a-5p</span>
+            </h3>
         </div>
         <div class="result-content">
-            <div class="info-table">
-                <div class="info-row">
-                    <span class="info-label">Full Name:</span>
-                    <span class="info-value" id="fullName">Homo sapiens let-7a-5p</span>
+            <div class="info-grid">
+                <!-- Left Column -->
+                <div class="info-column">
+                    <div class="info-row">
+                        <span class="info-label">Full Name:</span>
+                        <span class="info-value" id="fullName">Homo sapiens (human) hsa-let-7a-1</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Confidence:</span>
+                        <span class="info-value" id="confidence">High</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">miRBase Accession:</span>
+                        <span class="info-value" id="mirbaseAccession">MI0000060</span>
+                    </div>
+                    <div class="info-row" id="ensemblRow">
+                        <span class="info-label">Ensembl ID:</span>
+                        <span class="info-value" id="ensemblId">ENSG00000207550.1</span>
+                    </div>
+                    <div class="info-row" id="geneNameRow">
+                        <span class="info-label">Gene Name:</span>
+                        <span class="info-value" id="geneName">MIR99B</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Pre-miRNA Coordinates:</span>
+                        <span class="info-value" id="preMirnaCoordinates">chr19:51692612-51692681(+)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sequence:</span>
+                        <span class="info-value" id="sequence">
+                            <span class="sequence-wrapper">
+                                <span class="sequence-5p">5' - </span>
+                                <span class="sequence-text">UGAGGUAGUAGGUUGUAUAGUU</span>
+                                <span class="sequence-3p"> - 3'</span>
+                            </span>
+                        </span>
+                    </div>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Sequence:</span>
-                    <span class="info-value" id="sequence">UGAGGUAGUAGGUUGUAUAGUU</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">miRBase Accession:</span>
-                    <span class="info-value" id="mirbaseAccession">MI0000060</span>
+                
+                <!-- Right Column -->
+                <div class="info-column">
+                    <div class="info-row">
+                        <span class="info-label">Mature miRNAs:</span>
+                        <span class="info-value" id="matureMirnas">
+                            <div class="multi-line-value">
+                                <span class="copyable-item">hsa-miR-99b-5p</span>
+                                <span class="copyable-item">hsa-miR-99b-3p</span>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mature Accessions:</span>
+                        <span class="info-value" id="matureAccessions">
+                            <div class="multi-line-value">
+                                <span class="copyable-item">MIMAT0000689</span>
+                                <span class="copyable-item">MIMAT0004678</span>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mature Coordinates:</span>
+                        <span class="info-value" id="matureCoordinates">
+                            <div class="multi-line-value">
+                                <span class="copyable-item">chr19:51692618-51692639(+)</span>
+                                <span class="copyable-item">chr19:51692656-51692677(+)</span>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Mature Sequences:</span>
+                        <span class="info-value" id="matureSequences">
+                            <div class="multi-line-value">
+                                <span class="copyable-item sequence-item">5' - UGAGGUAGUAGGUUGUAUAGUU - 3'</span>
+                                <span class="copyable-item sequence-item">5' - CUGUACAGCCUCCUAGCUUUCC - 3'</span>
+                            </div>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,7 +166,10 @@
     <!-- Genome Browser View -->
     <div class="result-card">
         <div class="result-header">
-            <h3 class="result-title">Genome Browser View</h3>
+            <h3 class="result-title">
+                <span class="material-symbols-outlined" style="color: #FB8F67;">browse</span>
+                Genome Browser View
+            </h3>
         </div>
         <div class="result-content">
             <div class="genome-view">
@@ -128,7 +203,7 @@
     <div class="result-card">
         <div class="result-header">
             <h3 class="result-title">
-                <i class="fas fa-map-marker-alt" style="color: #6f42c1;"></i>
+                <span class="material-symbols-outlined" style="color: #5fa8d3;">location_on</span>
                 Main TSS
             </h3>
             <button class="details-btn" id="mainTssDetails">
@@ -137,17 +212,15 @@
             </button>
         </div>
         <div class="result-content">
-            <div class="data-table">
+            <div class="data-table main-tss-table">
                 <div class="table-header">
                     <div class="table-cell">Chromosome</div>
-                    <div class="table-cell">Start</div>
-                    <div class="table-cell">End</div>
+                    <div class="table-cell">Position</div>
                     <div class="table-cell">Strand</div>
                 </div>
-                <div class="table-row" id="mainTssData">
-                    <div class="table-cell">chr9</div>
-                    <div class="table-cell">95,111,162</div>
-                    <div class="table-cell">95,111,244</div>
+                <div class="table-row" id="mainTssData" onclick="copyMainTssPosition()" title="Click to copy position in format: chr19:41,234,567(+)">
+                    <div class="table-cell">chr19</div>
+                    <div class="table-cell">41,234,567</div>
                     <div class="table-cell">+</div>
                 </div>
             </div>
@@ -157,12 +230,12 @@
                 <h4>Supporting Evidence Details</h4>
                 <div class="evidence-list">
                     <div class="evidence-item">
-                        <span class="evidence-label">CAGE Samples:</span>
-                        <span class="evidence-value">42</span>
+                        <span class="evidence-label">TSS source:</span>
+                        <span class="evidence-value">CLS data</span>
                     </div>
                     <div class="evidence-item">
-                        <span class="evidence-label">RNA-Seq Samples:</span>
-                        <span class="evidence-value">15</span>
+                        <span class="evidence-label">Number of samples supporting:</span>
+                        <span class="evidence-value">42</span>
                     </div>
                     <div class="evidence-item">
                         <span class="evidence-label">Observed in:</span>
@@ -175,43 +248,79 @@
 
     <!-- Alternative TSSs -->
     <div class="result-card collapsible-card">
-        <div class="result-header collapsible-header" id="altTssHeader">
+        <div class="result-header collapsible-header" id="altTssHeader" onclick="toggleAltTssContainer()">
             <h3 class="result-title">
-                <i class="fas fa-flask" style="color: #e83e8c;"></i>
+                <span class="material-symbols-outlined" style="color: #A6808C;">alt_route</span>
                 Alternative TSSs
             </h3>
             <button class="collapse-btn" id="altTssToggle">
-                <i class="fas fa-chevron-up"></i>
+                <i class="fas fa-chevron-down"></i>
             </button>
         </div>
-        <div class="result-content collapsible-content" id="altTssContent" style="display: block;">
-            <div class="data-table">
+        <div class="result-content collapsible-content" id="altTssContent" style="display: none;">
+            <div class="data-table alt-tss-table">
                 <div class="table-header">
                     <div class="table-cell">Chromosome</div>
-                    <div class="table-cell">Start</div>
-                    <div class="table-cell">End</div>
+                    <div class="table-cell">Position</div>
                     <div class="table-cell">Strand</div>
                     <div class="table-cell">Supporting Evidence</div>
                 </div>
-                <div class="table-row" id="altTss1">
+                <div class="table-row" id="altTss1" onclick="copyAltTssPosition(1)" title="Click to copy position in format: chr19:41,234,500(+)">
                     <div class="table-cell">
-                        <i class="fas fa-chevron-right"></i>
-                        chr9
+                        <i class="fas fa-chevron-right clickable-evidence" onclick="showAltTssDetails(1, event)" title="Click to view details"></i>
+                        chr19
                     </div>
-                    <div class="table-cell">95,111,100</div>
-                    <div class="table-cell">95,111,180</div>
+                    <div class="table-cell">41,234,500</div>
                     <div class="table-cell">+</div>
                     <div class="table-cell">CAGE</div>
                 </div>
-                <div class="table-row" id="altTss2">
-                    <div class="table-cell">
-                        <i class="fas fa-chevron-right"></i>
-                        chr9
+                
+                <!-- Alternative TSS 1 Details -->
+                <div class="alt-tss-details" id="altTssDetails1" style="display: none;">
+                    <h4>Alternative TSS 1 Supporting Evidence</h4>
+                    <div class="evidence-list">
+                        <div class="evidence-item">
+                            <span class="evidence-label">TSS source:</span>
+                            <span class="evidence-value">CAGE (miRGen v4)</span>
+                        </div>
+                        <div class="evidence-item">
+                            <span class="evidence-label">Number of samples supporting:</span>
+                            <span class="evidence-value">23</span>
+                        </div>
+                        <div class="evidence-item">
+                            <span class="evidence-label">Observed in:</span>
+                            <span class="evidence-value">HCT116, MCF7, A549</span>
+                        </div>
                     </div>
-                    <div class="table-cell">95,111,300</div>
-                    <div class="table-cell">95,111,380</div>
+                </div>
+                
+                <div class="table-row" id="altTss2" onclick="copyAltTssPosition(2)" title="Click to copy position in format: chr19:41,234,600(+)">
+                    <div class="table-cell">
+                        <i class="fas fa-chevron-right clickable-evidence" onclick="showAltTssDetails(2, event)" title="Click to view details"></i>
+                        chr19
+                    </div>
+                    <div class="table-cell">41,234,600</div>
                     <div class="table-cell">+</div>
-                    <div class="table-cell">RNA-Seq</div>
+                    <div class="table-cell">CLS</div>
+                </div>
+                
+                <!-- Alternative TSS 2 Details -->
+                <div class="alt-tss-details" id="altTssDetails2" style="display: none;">
+                    <h4>Alternative TSS 2 Supporting Evidence</h4>
+                    <div class="evidence-list">
+                        <div class="evidence-item">
+                            <span class="evidence-label">TSS source:</span>
+                            <span class="evidence-value">CLS data</span>
+                        </div>
+                        <div class="evidence-item">
+                            <span class="evidence-label">Number of samples supporting:</span>
+                            <span class="evidence-value">15</span>
+                        </div>
+                        <div class="evidence-item">
+                            <span class="evidence-label">Observed in:</span>
+                            <span class="evidence-value">HCT116, MCF7</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -219,38 +328,107 @@
 
     <!-- Transcription Factors -->
     <div class="result-card collapsible-card">
-        <div class="result-header collapsible-header" id="tfHeader">
-            <h3 class="result-title">Transcription Factors</h3>
+        <div class="result-header collapsible-header" id="tfHeader" onclick="toggleTfContainer()">
+            <h3 class="result-title">
+                <span class="material-symbols-outlined" style="color: #FFB238;">tune</span>
+                Transcription Factors
+            </h3>
             <button class="collapse-btn" id="tfToggle">
                 <i class="fas fa-chevron-down"></i>
             </button>
         </div>
         <div class="result-content collapsible-content" id="tfContent" style="display: none;">
-            <div class="data-table">
+            <!-- TF Filters -->
+            <div class="tf-filters">
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label>TF Type:</label>
+                        <div class="custom-multiselect" id="tfTypeMultiselect">
+                            <button class="multiselect-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="selected-text">All Types</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </button>
+                            <ul class="multiselect-dropdown">
+                                <li><label class="multiselect-item">
+                                    <input type="checkbox" value="Cell line" checked>
+                                    <span>Cell line</span>
+                                </label></li>
+                                <li><label class="multiselect-item">
+                                    <input type="checkbox" value="Brain" checked>
+                                    <span>Brain</span>
+                                </label></li>
+                                <li><label class="multiselect-item">
+                                    <input type="checkbox" value="Liver" checked>
+                                    <span>Liver</span>
+                                </label></li>
+                                <li><label class="multiselect-item">
+                                    <input type="checkbox" value="Heart" checked>
+                                    <span>Heart</span>
+                                </label></li>
+                                <li><label class="multiselect-item">
+                                    <input type="checkbox" value="Kidney" checked>
+                                    <span>Kidney</span>
+                                </label></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Score Range:</label>
+                        <div class="score-range">
+                            <input type="range" id="scoreMin" min="0" max="1" step="0.01" value="0">
+                            <span id="scoreMinValue">0</span>
+                            <span>to</span>
+                            <input type="range" id="scoreMax" min="0" max="1" step="0.01" value="1">
+                            <span id="scoreMaxValue">1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="applyFilters" class="filter-btn">Apply</button>
+                        <button id="resetFilters" class="filter-btn reset-btn">Reset</button>
+                        
+                        <!-- Download Button with Dropdown -->
+                        <div class="download-container">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-danger" id="downloadBtn">DOWNLOAD</button>
+                                <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-format="tsv">tsv</a></li>
+                                    <li><a class="dropdown-item" href="#" data-format="csv">csv</a></li>
+                                    <li><a class="dropdown-item" href="#" data-format="excel">excel</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="data-table tf-table">
                 <div class="table-header">
                     <div class="table-cell">TF Name</div>
                     <div class="table-cell">Start</div>
                     <div class="table-cell">End</div>
                     <div class="table-cell">Score</div>
+                    <div class="table-cell">Type</div>
                 </div>
-                <div class="table-row" id="tf1">
-                    <div class="table-cell">MYC</div>
-                    <div class="table-cell">95,111,050</div>
-                    <div class="table-cell">95,111,070</div>
-                    <div class="table-cell">0.92</div>
+                <div id="tfTableBody">
+                    <!-- Table rows will be populated by JavaScript -->
                 </div>
-                <div class="table-row" id="tf2">
-                    <div class="table-cell">SP1</div>
-                    <div class="table-cell">95,111,280</div>
-                    <div class="table-cell">95,111,300</div>
-                    <div class="table-cell">0.88</div>
-                </div>
-                <div class="table-row" id="tf3">
-                    <div class="table-cell">CTCF</div>
-                    <div class="table-cell">95,111,400</div>
-                    <div class="table-cell">95,111,425</div>
-                    <div class="table-cell">0.85</div>
-                </div>
+            </div>
+            
+            <!-- Results Summary -->
+            <div class="results-summary">
+                Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> results
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <button id="prevPage" disabled>Previous</button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextPage">Next</button>
             </div>
         </div>
     </div>
@@ -262,15 +440,23 @@
         </div>
         <div class="result-content">
             <div class="external-links">
-                <a href="#" class="external-btn" id="mirbaseLink" target="_blank">
+                <a href="https://www.mirbase.org/" class="external-btn" id="mirbaseLink" target="_blank" rel="noopener noreferrer">
                     <i class="fas fa-external-link-alt"></i>
                     miRBase
                 </a>
-                <a href="#" class="external-btn" id="ensemblLink" target="_blank">
+                <a href="#" class="external-btn" id="ensemblLink" target="_blank" rel="noopener noreferrer" style="display: none;">
                     <i class="fas fa-external-link-alt"></i>
                     Ensembl
                 </a>
-                <a href="#" class="external-btn" id="ucscLink" target="_blank">
+                <a href="#" class="external-btn" id="tarbaseLink" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-external-link-alt"></i>
+                    TarBase
+                </a>
+                <a href="#" class="external-btn" id="mirnaTissueAtlasLink" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-external-link-alt"></i>
+                    miRNATissueAtlas
+                </a>
+                <a href="#" class="external-btn" id="ucscLink" target="_blank" rel="noopener noreferrer">
                     <i class="fas fa-external-link-alt"></i>
                     UCSC Browser
                 </a>
@@ -281,9 +467,10 @@
 {% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=alt_route,browse,location_on,tune" />
 <link rel="stylesheet" href="{% static 'css/home_style.css' %}">
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/home_script.js' %}"></script>
+    <script src="{% static 'js/home_script.js' %}"></script>
 {% endblock %}

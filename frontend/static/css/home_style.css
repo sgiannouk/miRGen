@@ -98,19 +98,21 @@
 }
 
 .search-btn:hover {
-    /* No hover effects */
+    /* Subtle nod effect on hover */
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
-    transform: none;
-    box-shadow: none;
+    transform: rotateX(2deg) rotateY(-1deg) translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    transition: all 0.2s ease;
 }
 
 .search-btn:active {
-    /* No active effects */
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    /* Subtle click effect */
+    background: linear-gradient(135deg, #5a6fd8, #6a4190);
     color: white;
-    transform: none;
-    box-shadow: none;
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.1s ease;
 }
 
 .search-btn:focus {
@@ -336,7 +338,8 @@
 }
 
 .result-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    /* Remove hover effects to prevent grey highlights */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Keep original shadow */
 }
 
 .result-header {
@@ -479,12 +482,13 @@
 }
 
 .result-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    /* Remove hover effects to prevent grey highlights */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Keep original shadow */
 }
 
 .result-header {
     background: transparent; /* Removed grey background */
-    padding: 0.75rem 0; /* Reduced from 1.25rem to 0.75rem */
+    padding: 0.5rem 0; /* Reduced from 0.75rem to 0.5rem */
     border-bottom: none; /* Removed border line */
     display: flex;
     justify-content: space-between;
@@ -502,6 +506,11 @@
     gap: 0.5rem;
 }
 
+.result-title i {
+    color: #8ab4f8;
+    font-size: 1.2rem;
+}
+
 /* miRNA name color in Basic Information */
 .result-title #mirnaDisplayName {
     color: #00809D;
@@ -509,21 +518,41 @@
 }
 
 .result-content {
-    padding: 0.5rem 0; /* Reduced from 1.5rem to bring content closer to titles */
+    padding: 0.25rem 0; /* Reduced from 0.5rem to 0.25rem to bring content closer to titles */
 }
 
 /* Basic Information Styles */
-.info-table {
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 0.5rem 0;
+    align-items: start;
+}
+
+/* Ensure both columns have the same structure */
+.info-column {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    width: 100%;
+}
+
+.info-column:first-child,
+.info-column:last-child {
+    width: 100%;
+}
+
+.info-column {
+    display: flex;
+    flex-direction: column;
 }
 
 .info-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    min-height: 2.2rem;
 }
 
 .info-row:last-child {
@@ -533,30 +562,259 @@
 .info-label {
     font-weight: 600;
     color: #495057;
-    min-width: 150px;
+    width: 140px;
     margin-right: 1rem;
-    font-size: 1.05rem; /* Increased from default */
+    font-size: 0.9rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.3;
+    flex-shrink: 0;
 }
 
+/* Elegant copy functionality for Basic Information */
 .info-value {
-    color: #6c757d;
-    font-family: 'Courier New', monospace;
-    font-size: 1.05rem; /* Increased from 0.95rem */
+    color: #495057;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.9rem;
     cursor: pointer;
+    transition: all 0.2s ease;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
-    transition: all 0.2s ease;
-    user-select: all;
+    position: relative;
+    user-select: none; /* Prevent text selection highlighting */
+    line-height: 1.3;
+    flex: 1;
+    word-break: break-word;
+    min-width: 0; /* Ensure flex item can shrink */
+    text-align: left;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure all values start at the same point */
+.info-value > *:first-child {
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .info-value:hover {
-    background: rgba(0, 128, 157, 0.1);
-    color: #00809D;
+    background-color: rgba(138, 180, 248, 0.1);
+    color: #8ab4f8;
+}
+
+.info-value:active {
+    background-color: rgba(138, 180, 248, 0.2);
 }
 
 .info-value.copied {
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.info-value.copied::after {
+    content: '✓';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #155724;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+/* Sequence styling */
+.sequence-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.sequence-5p,
+.sequence-3p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.sequence-text {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    position: relative;
+    user-select: none; /* Prevent text selection highlighting */
+}
+
+.sequence-text:hover {
+    background-color: rgba(138, 180, 248, 0.1);
+    color: #8ab4f8;
+}
+
+.sequence-text.copied {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.sequence-text.copied::after {
+    content: '✓';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #155724;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+/* Confidence styling */
+#confidence {
+    font-weight: 600;
+    cursor: default; /* Disable copy cursor */
+    user-select: none; /* Disable text selection */
+}
+
+#confidence.high {
+    color: #89BD9E;
+}
+
+#confidence.low {
+    color: #DB4C40;
+}
+
+#confidence.medium {
+    color: #F0C987;
+}
+
+/* Coordinates styling */
+#preMirnaCoordinates,
+#matureCoordinates {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Accession styling - using same font as other results */
+#mirbaseAccession,
+#matureAccessions {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Ensure Ensembl ID and Gene Name align perfectly */
+#ensemblId,
+#geneName {
+    padding: 0.25rem 0.5rem; /* Match other info-value padding */
+    margin: 0;
+    line-height: 1.3;
+    text-align: left;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure all info-value elements have consistent alignment */
+.info-value {
+    color: #495057;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    position: relative;
+    user-select: none; /* Prevent text selection highlighting */
+    line-height: 1.3;
+    flex: 1;
+    word-break: break-word;
+    min-width: 0; /* Ensure flex item can shrink */
+    text-align: left;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure right column values align with left column */
+.info-column:last-child .info-value {
+    padding-left: 0;
+    margin-left: 0;
+    text-align: left;
+}
+
+/* Force alignment for all right column content */
+.info-column:last-child .info-value > * {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+/* Multi-line values styling */
+.multi-line-value {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.copyable-item {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.3;
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: 0;
+    padding-left: 0;
+    position: relative;
+    user-select: none; /* Prevent text selection highlighting */
+}
+
+.copyable-item:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+/* Mature sequence styling */
+.sequence-item {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.copyable-item:hover {
+    background-color: rgba(138, 180, 248, 0.1);
+    color: #8ab4f8;
+}
+
+.copyable-item.copied {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.copyable-item.copied::after {
+    content: '✓';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #155724;
+    font-weight: bold;
+    font-size: 0.875rem;
 }
 
 /* Genome Browser View Styles */
@@ -629,45 +887,179 @@
     border-radius: 8px;
     overflow: hidden;
     border: none; /* Removed border */
+    table-layout: fixed;
 }
 
-.table-header {
+/* Main TSS table - 3 columns */
+.main-tss-table .table-header,
+.main-tss-table .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+}
+
+/* Alternative TSS table - 4 columns */
+.alt-tss-table .table-header,
+.alt-tss-table .table-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    background: rgba(108, 117, 125, 0.05); /* Very subtle background */
-    color: #495057;
-    font-weight: 700; /* Made bold */
-    font-size: 0.95rem; /* Increased from 0.85rem */
-    border-bottom: none; /* Removed border */
+    gap: 0;
 }
 
-.table-header:has(+ .table-row:has(.table-cell:nth-child(5))) {
+/* Transcription Factors table - 5 columns with proper alignment */
+.tf-table .table-header,
+.tf-table .table-row {
+    display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
 }
 
+/* Ensure TF table cells are properly sized and consistent with other tables */
+.tf-table .table-cell {
+    min-width: 0; /* Allow cells to shrink */
+    overflow: hidden; /* Prevent content overflow */
+    text-overflow: ellipsis; /* Show ellipsis for long text */
+    padding: 0.6rem 0.8rem; /* Consistent padding with other tables */
+    font-size: 0.95rem; /* Same font size as other tables */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    border-right: none;
+    text-align: left;
+    min-height: 2.5rem; /* Same height as other tables */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+/* Ensure TF table headers are consistent with other tables */
+.tf-table .table-header .table-cell {
+    font-weight: 700;
+    background: rgba(108, 117, 125, 0.05); /* Same background as other tables */
+    border-bottom: none; /* Remove border to match other tables */
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+/* Ensure TF table rows are consistent with other tables */
+.tf-table .table-row {
+    background: white;
+    border-bottom: none; /* Remove border to match other tables */
+    transition: background-color 0.2s ease;
+    min-height: 2.5rem;
+    align-items: stretch;
+}
+
+.tf-table .table-row:last-child {
+    border-bottom: none;
+}
+
+/* Remove the special TF table styling that made it different */
+.tf-table .table-header,
+.tf-table .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+}
+
+/* Ensure perfect table alignment */
+.table-header .table-cell,
+.table-row .table-cell {
+    box-sizing: border-box;
+    border: none;
+    vertical-align: top;
+}
+
+/* Handle long text in table cells */
 .table-cell {
     padding: 0.6rem 0.8rem; /* Reduced padding */
     display: flex;
     align-items: center;
+    justify-content: flex-start; /* Ensure left alignment */
     gap: 0.5rem;
     border-right: none; /* Removed vertical borders */
     font-size: 0.95rem; /* Increased from 0.85rem */
+    text-align: left;
+    min-height: 2.5rem; /* Ensure consistent row height */
+    word-wrap: break-word; /* Allow text to wrap */
+    overflow-wrap: break-word;
+    white-space: normal; /* Allow text to wrap to multiple lines */
 }
 
-.table-cell:last-child {
-    border-right: none;
-}
-
+/* Ensure all table cells in a row have the same height */
 .table-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
     background: white;
     border-bottom: none; /* Removed horizontal borders */
     transition: background-color 0.2s ease;
+    min-height: 2.5rem; /* Ensure consistent row height */
+    align-items: stretch; /* Stretch all cells to same height */
 }
 
-.table-row:has(.table-cell:nth-child(5)) {
+/* Handle multi-line content in table cells */
+.table-cell.multi-line {
+    align-items: flex-start;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+}
+
+/* Ensure table rows expand to accommodate content */
+.table-row.expanded {
+    min-height: auto;
+}
+
+/* Force table layout to be consistent */
+.data-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Ensure grid columns are properly sized */
+.main-tss-table .table-header,
+.main-tss-table .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+}
+
+.alt-tss-table .table-header,
+.alt-tss-table .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+}
+
+.tf-table .table-header,
+.tf-table .table-row {
+    display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0;
+}
+
+.table-row {
+    background: white;
+    border-bottom: none; /* Removed horizontal borders */
+    transition: background-color 0.2s ease;
+    min-height: 2.5rem; /* Ensure consistent row height */
+}
+
+/* Handle multi-line content in table cells */
+.table-cell.multi-line {
+    align-items: flex-start;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+}
+
+/* Ensure table rows expand to accommodate content */
+.table-row.expanded {
+    min-height: auto;
+}
+
+/* Special case for Alternative TSS rows with 4 columns */
+.table-row:has(.table-cell:nth-child(4)) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .table-row:hover {
@@ -682,6 +1074,11 @@
     color: #495057;
     font-size: 0.95rem; /* Increased from 0.85rem */
     border-right: none; /* Removed vertical borders */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ensure left alignment */
+    text-align: left;
+    padding: 0.6rem 0.8rem; /* Match header padding exactly */
 }
 
 .table-row .table-cell:last-child {
@@ -691,6 +1088,7 @@
 .table-row .table-cell i {
     color: #6c757d;
     font-size: 0.8rem; /* Increased from 0.7rem */
+    margin-right: 0.5rem; /* Add consistent spacing for icons */
 }
 
 /* Details Button */
@@ -799,6 +1197,43 @@
     font-size: 1rem; /* Increased from 0.9rem */
 }
 
+/* Copy Button - REMOVED - Now using clickable position item */
+/* .copy-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.copy-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.copy-btn:active {
+    background: #495057;
+    transform: translateY(0);
+}
+
+.copy-btn i {
+    font-size: 0.875rem;
+} */
+
+/* Table cell with copy button */
+.table-cell:last-child {
+    text-align: center;
+    vertical-align: middle;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-section {
@@ -863,6 +1298,11 @@
     
     .result-content {
         padding: 1rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     .info-row {
@@ -943,8 +1383,19 @@
     transition: background-color 0.3s ease;
 }
 
+/* Remove hover effects from collapsible headers */
 .collapsible-header:hover {
-    background: linear-gradient(135deg, #e9ecef, #dee2e6);
+    /* Remove any hover background effects */
+    background-color: transparent;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Remove hover effects from collapsible header titles */
+.collapsible-header .result-title:hover {
+    /* Remove any hover effects on the title */
+    background-color: transparent;
+    transform: none;
 }
 
 .collapse-btn {
@@ -962,8 +1413,8 @@
 }
 
 .collapse-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #495057;
+    background: transparent;
+    color: #6c757d;
 }
 
 .collapse-btn i {
@@ -988,9 +1439,798 @@
 
 /* Make collapsed containers shorter */
 .collapsible-card.collapsed .result-header {
-    padding: 0.5rem 0; /* Reduced padding when collapsed */
+    padding: 0.4rem 0; /* Reduced padding for closed state */
+    border-radius: 8px; /* Slightly more rounded corners */
 }
 
 .collapsible-card.collapsed .result-content {
-    padding: 0; /* No padding when collapsed */
+    display: none; /* Hide content when collapsed */
+}
+
+/* Add subtle shadow and border for closed state */
+.collapsible-card.collapsed {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+/* Elegant copy functionality for Main TSS row */
+#mainTssData {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 0.5rem 0;
+    user-select: none; /* Prevent text selection highlighting */
+}
+
+#mainTssData:hover {
+    background-color: rgba(138, 180, 248, 0.1);
+    transform: translateY(-1px);
+}
+
+#mainTssData:active {
+    background-color: rgba(138, 180, 248, 0.2);
+    transform: translateY(0);
+}
+
+#mainTssData.copied {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#mainTssData.copied::after {
+    content: '✓';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #155724;
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1; /* Ensure tick stays on same line */
+} 
+
+/* Elegant copy functionality for Alternative TSS rows */
+#altTss1, #altTss2 {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 0.5rem 0;
+    user-select: none; /* Prevent text selection highlighting */
+}
+
+/* Remove hover effects from Alternative TSS and Transcription Factors */
+#altTss1:hover, #altTss2:hover {
+    /* Remove hover background and transform effects */
+    background-color: transparent;
+    transform: none;
+}
+
+#altTss1:active, #altTss2:active {
+    /* Remove active state effects */
+    background-color: transparent;
+    transform: none;
+}
+
+#altTss1.copied, #altTss2.copied {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#altTss1.copied::after, #altTss2.copied::after {
+    content: '✓';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #155724;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Clickable evidence styling for Alternative TSS chevron */
+.clickable-evidence {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    position: relative;
+    color: #6c757d; /* Keep consistent color */
+}
+
+.clickable-evidence:hover {
+    /* Remove background highlight completely, keep only cursor change */
+    color: #A6808C;
+    background-color: transparent !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+.clickable-evidence:active {
+    /* Remove active state highlight completely */
+    color: #A6808C;
+    background-color: transparent !important;
+    transform: none;
+    box-shadow: none !important;
+}
+
+/* Supporting Evidence Details Section - Main TSS */
+.supporting-evidence {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #5fa8d3; /* Sky blue color for Main TSS */
+}
+
+.supporting-evidence h4 {
+    color: #5fa8d3; /* Sky blue color for the title */
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Alternative TSS Details styling - same layout as Main TSS but different color */
+.alt-tss-details {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #A6808C; /* Dusty rose/mauve color for Alternative TSS */
+}
+
+.alt-tss-details h4 {
+    color: #A6808C; /* Dusty rose/mauve color for the title */
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+} 
+
+/* Material Symbols styling */
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    font-size: 1.5rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+} 
+
+/* Add consistent spacing for Strand column */
+.table-row .table-cell:nth-child(3) {
+    padding-left: 1.2rem; /* Add extra left padding for Strand column to create space */
+}
+
+/* Ensure the Strand header also has consistent alignment */
+.table-header .table-cell:nth-child(3) {
+    padding-left: 1.2rem; /* Match the data cell padding for perfect alignment */
+} 
+
+/* Make collapsible headers look clickable */
+.collapsible-header {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.collapsible-header:hover {
+    /* Remove any hover background effects */
+    background-color: transparent;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Remove hover effects from collapsible header titles */
+.collapsible-header .result-title:hover {
+    /* Remove any hover effects on the title */
+    background-color: transparent;
+    transform: none;
+} 
+
+/* Utility class for multi-line table cells */
+.table-cell.multi-line {
+    align-items: flex-start;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    white-space: pre-line; /* Preserve line breaks */
+    line-height: 1.4; /* Better readability for multi-line text */
+}
+
+/* Example of how to use multi-line class in HTML:
+   <div class="table-cell multi-line">Line 1<br>Line 2<br>Line 3</div>
+*/ 
+
+/* General table header styling */
+.table-header {
+    background: rgba(108, 117, 125, 0.05); /* Very subtle background */
+    color: #495057;
+    font-weight: 700; /* Made bold */
+    font-size: 0.95rem; /* Increased from 0.85rem */
+    border-bottom: none; /* Removed border */
+} 
+
+/* Remove any conflicting TF table rules and ensure identical styling */
+.tf-table .table-header,
+.tf-table .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+}
+
+.tf-table .table-cell {
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    border-right: none;
+    font-size: 0.95rem;
+    text-align: left;
+    min-height: 2.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    background: transparent;
+}
+
+.tf-table .table-header .table-cell {
+    background: rgba(108, 117, 125, 0.05);
+    color: #495057;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-bottom: none;
+}
+
+.tf-table .table-row {
+    background: white;
+    border-bottom: none;
+    transition: background-color 0.2s ease;
+    min-height: 2.5rem;
+    align-items: stretch;
+}
+
+.tf-table .table-row:last-child {
+    border-bottom: none;
+}
+
+/* Ensure TF table container has identical styling */
+.data-table.tf-table {
+    width: 100% !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    border: none !important;
+} 
+
+/* Make TF table styles more specific to override general table styles */
+.data-table.tf-table .table-header,
+.data-table.tf-table .table-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+}
+
+.data-table.tf-table .table-cell {
+    padding: 0.6rem 0.8rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+    border-right: none !important;
+    font-size: 0.95rem !important;
+    text-align: left !important;
+    min-height: 2.5rem !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    background: transparent !important;
+}
+
+.data-table.tf-table .table-header .table-cell {
+    background: rgba(108, 117, 125, 0.05) !important; /* Exact same background as Main TSS */
+    color: #495057 !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    border-bottom: none !important;
+}
+
+.data-table.tf-table .table-row {
+    background: white !important;
+    border-bottom: none !important;
+    transition: background-color 0.2s ease !important;
+    min-height: 2.5rem !important;
+    align-items: stretch !important;
+}
+
+.data-table.tf-table .table-row:last-child {
+    border-bottom: none !important;
+}
+
+/* Ensure TF table container has identical styling */
+.data-table.tf-table {
+    width: 100% !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    border: none !important;
+} 
+
+/* Also ensure the general TF table header background matches */
+.tf-table .table-header .table-cell {
+    background: rgba(108, 117, 125, 0.05) !important; /* Exact same background as Main TSS */
+    color: #495057 !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    border-bottom: none !important;
+} 
+
+/* TF Filters Styling - Minimalistic Elegant Design */
+.tf-filters {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filter-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.8rem;
+    text-transform: none;
+    letter-spacing: 0.2px;
+    min-width: 80px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.filter-group select {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: white;
+    min-width: 120px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    color: #495057;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #FFB238;
+    box-shadow: 0 0 0 2px rgba(255, 178, 56, 0.1);
+}
+
+.filter-group select:hover {
+    border-color: #FFB238;
+}
+
+.custom-multiselect {
+    position: relative;
+    display: inline-block;
+    z-index: 1001;
+}
+
+.multiselect-toggle {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    color: #495057;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 140px;
+    transition: all 0.2s ease;
+}
+
+.multiselect-toggle:hover {
+    border-color: #FFB238;
+    background: #fff8f0;
+}
+
+.multiselect-toggle:focus {
+    outline: none;
+    border-color: #FFB238;
+    box-shadow: 0 0 0 2px rgba(255, 178, 56, 0.1);
+}
+
+.dropdown-arrow {
+    font-size: 0.7rem;
+    margin-left: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.multiselect-toggle[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.multiselect-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: 0.25rem;
+    padding: 0.5rem 0;
+    z-index: 1000;
+    min-width: 160px;
+    display: none;
+    list-style: none;
+}
+
+.multiselect-dropdown.show {
+    display: block;
+}
+
+.multiselect-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #495057;
+    transition: background-color 0.2s ease;
+    margin: 0;
+    width: 100%;
+    list-style: none;
+}
+
+.multiselect-item:hover {
+    background: #f8f9fa;
+}
+
+.multiselect-item input[type="checkbox"] {
+    margin: 0;
+    accent-color: #FFB238;
+}
+
+.multiselect-item input[type="checkbox"]:checked + span {
+    color: #FFB238;
+    font-weight: 500;
+}
+
+
+
+.score-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8f9fa;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.score-range:hover {
+    border-color: #FFB238;
+    background: #f1f3f4;
+}
+
+.score-range input[type="range"] {
+    width: 80px;
+    height: 4px;
+    border-radius: 2px;
+    background: #dee2e6;
+    outline: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.score-range input[type="range"]:hover {
+    background: #FFB238;
+}
+
+.score-range input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #FFB238;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(255, 178, 56, 0.3);
+    transition: all 0.2s ease;
+}
+
+.score-range input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(255, 178, 56, 0.4);
+}
+
+.score-range input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #FFB238;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 3px rgba(255, 178, 56, 0.3);
+    transition: all 0.2s ease;
+}
+
+.score-range input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+.score-range span {
+    font-size: 0.8rem;
+    color: #6c757d;
+    min-width: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.score-range span:not(:nth-child(2)):not(:nth-child(4)) {
+    color: #495057;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: none;
+    letter-spacing: 0.2px;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.filter-btn {
+    background: #FFB238;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    min-width: 80px;
+    height: 32px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-btn:hover {
+    background: #e6a032;
+    transform: translateY(-1px);
+}
+
+.filter-btn:active {
+    transform: translateY(0);
+}
+
+.filter-btn.reset-btn {
+    background: #6c757d;
+}
+
+.filter-btn.reset-btn:hover {
+    background: #5a6268;
+}
+
+/* Download Button Styling - Bootstrap Split Button */
+.download-container {
+    display: inline-block;
+}
+
+.download-container .btn-group {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.download-container .btn {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    padding: 0.4rem 0.8rem;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.download-container .btn-danger {
+    background: #9b2226;
+    color: white;
+}
+
+.download-container .btn-danger:hover {
+    background: #7f1d1e;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.download-container .btn-danger:focus {
+    background: #7f1d1e;
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(155, 34, 38, 0.25);
+}
+
+.download-container .dropdown-toggle-split {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.download-container .dropdown-menu {
+    min-width: 120px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: 0.25rem;
+    display: none;
+    z-index: 1002;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.download-container .dropdown-menu.show {
+    display: block;
+}
+
+.download-container .dropdown-item {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.download-container .dropdown-item:hover {
+    background: #f8f9fa;
+    color: #FFB238;
+}
+
+.download-container .dropdown-item .material-symbols-outlined {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.download-container .dropdown-item:hover .material-symbols-outlined {
+    color: #FFB238;
+}
+
+ 
+
+/* Results Summary - Minimalistic Design */
+.results-summary {
+    background: #f8f9fa;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    color: #495057;
+    text-align: center;
+    border: 1px solid #e9ecef;
+    font-weight: 500;
+}
+
+.results-summary span {
+    font-weight: 600;
+    color: #FFB238;
+}
+
+/* Pagination - Minimalistic Design */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.pagination button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    min-width: 80px;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.pagination button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.pagination button:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#pageInfo {
+    font-size: 0.85rem;
+    color: #495057;
+    font-weight: 500;
+    min-width: 120px;
+    text-align: center;
+    padding: 0.4rem 0.8rem;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+} 
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    
+    .filter-group label {
+        text-align: center;
+        min-width: auto;
+    }
+    
+    .filter-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 } 

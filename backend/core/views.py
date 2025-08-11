@@ -36,6 +36,7 @@ def search_view(request):
     """Search functionality"""
     query = request.GET.get('q', '')
     search_type = request.GET.get('type', 'mirna')
+    organism = request.GET.get('organism', '')
     
     if not query:
         return render(request, 'search.html')
@@ -50,20 +51,33 @@ def search_view(request):
     
     results = []
     
+    # Map organism values to species names
+    organism_to_species = {
+        'human_GRCh38': 'Human',
+        'mouse_GRCm39': 'Mouse'
+    }
+    
+    species_name = organism_to_species.get(organism, 'Human')  # Default to Human
+    
     if search_type == 'mirna':
         results = MiRNA.objects.filter(
             Q(name__icontains=query) |
             Q(sequence__icontains=query) |
-            Q(description__icontains=query)
+            Q(description__icontains=query),
+            species__name=species_name
         )[:50]
     elif search_type == 'gene':
         results = Gene.objects.filter(
             Q(name__icontains=query) |
             Q(symbol__icontains=query) |
-            Q(description__icontains=query)
+            Q(description__icontains=query),
+            species__name=species_name
         )[:50]
     elif search_type == 'sequence':
-        results = MiRNA.objects.filter(sequence__icontains=query)[:50]
+        results = MiRNA.objects.filter(
+            sequence__icontains=query,
+            species__name=species_name
+        )[:50]
     elif search_type == 'pathway':
         results = Pathway.objects.filter(
             Q(name__icontains=query) |
@@ -79,6 +93,7 @@ def search_view(request):
     context = {
         'query': query,
         'search_type': search_type,
+        'organism': organism,
         'results': results,
         'results_count': len(results)
     }
