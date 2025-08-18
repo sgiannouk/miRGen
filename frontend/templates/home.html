@@ -208,7 +208,7 @@
             </h3>
             <button class="details-btn" id="mainTssDetails">
                 <i class="fas fa-info-circle"></i>
-                Details
+                Show Details
             </button>
         </div>
         <div class="result-content">
@@ -222,6 +222,29 @@
                     <div class="table-cell">chr19</div>
                     <div class="table-cell">41,234,567</div>
                     <div class="table-cell">+</div>
+                </div>
+            </div>
+            
+            <!-- Host Gene Information Section -->
+            <div class="host-gene-info" id="hostGeneInfo" style="display: none;">
+                <h4>Host Gene Information</h4>
+                <div class="info-list" id="hostGeneInfoContent">
+                    <div class="info-item">
+                        <span class="info-label">Host Gene ID:</span>
+                        <span class="info-value">ENSG00000139618</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Host Gene Name:</span>
+                        <span class="info-value">BRCA1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Host Gene Type:</span>
+                        <span class="info-value">Protein coding</span>
+                    </div>
+                </div>
+                <!-- Alternative content when no host gene exists -->
+                <div class="no-host-gene" id="noHostGeneContent" style="display: none;">
+                    <p>This miRNA does not have an associated host gene.</p>
                 </div>
             </div>
             

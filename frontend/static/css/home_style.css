@@ -588,6 +588,7 @@
     text-align: left;
     margin: 0;
     box-sizing: border-box;
+    background-color: transparent !important; /* Force remove grey background */
 }
 
 /* Ensure all values start at the same point */
@@ -597,18 +598,19 @@
 }
 
 .info-value:hover {
-    background-color: rgba(138, 180, 248, 0.1);
-    color: #8ab4f8;
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Match the Main TSS blue color */
 }
 
 .info-value:active {
-    background-color: rgba(138, 180, 248, 0.2);
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Keep blue color on active state */
 }
 
 .info-value.copied {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #e3f2fd !important; /* Light blue background */
+    color: #1976d2; /* Darker blue text */
+    border: 1px solid #5fa8d3; /* Blue border */
 }
 
 .info-value.copied::after {
@@ -617,7 +619,7 @@
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    color: #155724;
+    color: #1976d2; /* Blue tick color */
     font-weight: bold;
     font-size: 0.875rem;
 }
@@ -638,7 +640,7 @@
 }
 
 .sequence-text {
-    font-family: 'Courier New', monospace;
+    font-family: 'Courier New', monospace !important;
     font-weight: 500;
     color: #495057;
     font-size: 0.9rem;
@@ -651,14 +653,19 @@
 }
 
 .sequence-text:hover {
-    background-color: rgba(138, 180, 248, 0.1);
-    color: #8ab4f8;
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Match the Main TSS blue color */
+}
+
+.sequence-text:active {
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Keep blue color on active state */
 }
 
 .sequence-text.copied {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #e3f2fd; /* Light blue background */
+    color: #1976d2; /* Darker blue text */
+    border: 1px solid #5fa8d3; /* Blue border */
 }
 
 .sequence-text.copied::after {
@@ -667,7 +674,7 @@
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    color: #155724;
+    color: #1976d2; /* Blue tick color */
     font-weight: bold;
     font-size: 0.875rem;
 }
@@ -691,10 +698,10 @@
     color: #F0C987;
 }
 
-/* Coordinates styling */
+/* Coordinates styling - keep monospace font */
 #preMirnaCoordinates,
 #matureCoordinates {
-    font-family: 'Courier New', monospace;
+    font-family: 'Courier New', monospace !important;
     font-weight: 500;
     color: #495057;
     font-size: 0.9rem;
@@ -707,6 +714,121 @@
     font-weight: 500;
     color: #495057;
     font-size: 0.9rem;
+}
+
+/* Mature sequences styling - keep monospace font */
+#matureSequences {
+    font-family: 'Courier New', monospace !important;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Main sequence styling - keep monospace font */
+#sequence {
+    font-family: 'Courier New', monospace !important;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Force remove background from all Basic Information fields */
+.info-grid .info-value,
+.info-column .info-value,
+.info-row .info-value {
+    background-color: transparent !important;
+    background: none !important;
+}
+
+/* Ensure copied state background shows properly for Basic Information */
+.info-grid .info-value.copied,
+.info-column .info-value.copied,
+.info-row .info-value.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    background: #e3f2fd !important; /* Light blue background */
+}
+
+/* Additional specificity to ensure backgrounds are removed */
+.info-grid .info-row .info-value,
+.info-column .info-row .info-value,
+.info-grid .info-column .info-value {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Specific font styling for Basic Information fields */
+#fullName,
+#confidence,
+#mirbaseAccession,
+#ensemblId,
+#geneName,
+#matureMirnas,
+#matureAccessions {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Ensure copied state background shows for specific Basic Information fields */
+#fullName.copied,
+#mirbaseAccession.copied,
+#ensemblId.copied,
+#geneName.copied,
+#matureMirnas.copied,
+#matureAccessions.copied,
+#matureCoordinates.copied,
+#matureSequences.copied,
+#sequence.copied,
+#preMirnaCoordinates.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    background: #e3f2fd !important; /* Light blue background */
+}
+
+/* Prevent hover effects on non-copyable fields */
+#confidence:hover {
+    color: inherit !important;
+    background-color: transparent !important;
+}
+
+/* Ensure confidence colors are preserved on hover */
+#confidence.high:hover {
+    color: #89BD9E !important;
+}
+
+#confidence.medium:hover {
+    color: #F0C987 !important;
+}
+
+#confidence.low:hover {
+    color: #DB4C40 !important;
+}
+
+/* Specific hover styling for right column fields - only font color change, no background */
+#matureMirnas:hover,
+#matureAccessions:hover,
+#matureCoordinates:hover,
+#matureSequences:hover {
+    background-color: transparent !important;
+    background: none !important;
+    color: #5fa8d3 !important; /* Blue font color */
+}
+
+/* Ensure right column fields maintain pointer cursor and no background changes */
+#matureMirnas,
+#matureAccessions,
+#matureCoordinates,
+#matureSequences {
+    cursor: pointer !important;
+}
+
+/* Override any background changes on hover for right column */
+.info-column:last-child .info-value:hover,
+.info-column:last-child .info-value:active {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
 }
 
 /* Ensure Ensembl ID and Gene Name align perfectly */
@@ -739,6 +861,7 @@
     text-align: left;
     margin: 0;
     box-sizing: border-box;
+    background-color: transparent !important; /* Force remove grey background */
 }
 
 /* Ensure right column values align with left column */
@@ -746,6 +869,39 @@
     padding-left: 0;
     margin-left: 0;
     text-align: left;
+}
+
+/* Final override to ensure no backgrounds in Basic Information */
+.info-grid .info-value,
+.info-grid .info-row .info-value,
+.info-grid .info-column .info-value {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* Extra specific override for right column to prevent any background changes */
+.info-column:last-child .info-value,
+.info-column:last-child .info-value:hover,
+.info-column:last-child .info-value:active,
+.info-column:last-child .info-value:focus {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Final override to ensure copied state shows light blue background everywhere */
+.info-grid .info-value.copied,
+.info-column .info-value.copied,
+.info-row .info-value.copied,
+.info-grid .copyable-item.copied,
+.info-column .copyable-item.copied,
+.info-row .copyable-item.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    background: #e3f2fd !important; /* Light blue background */
 }
 
 /* Force alignment for all right column content */
@@ -762,6 +918,41 @@
     width: 100%;
     margin-top: 0;
     padding-top: 0;
+}
+
+/* Ensure multi-line values in right column have no background */
+.info-column:last-child .multi-line-value .info-value,
+.info-column:last-child .multi-line-value .info-value:hover,
+.info-column:last-child .multi-line-value .info-value:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure multi-line values show light blue background on copied state */
+.info-column:last-child .multi-line-value .info-value.copied,
+.info-column:last-child .multi-line-value .copyable-item.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    background: #e3f2fd !important; /* Light blue background */
+}
+
+/* Ensure copyable items in right column have no background and maintain pointer cursor */
+.info-column:last-child .copyable-item,
+.info-column:last-child .copyable-item:hover,
+.info-column:last-child .copyable-item:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+}
+
+/* Ensure right column copied state shows light blue background */
+.info-column:last-child .copyable-item.copied,
+.info-column:last-child .info-value.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    background: #e3f2fd !important; /* Light blue background */
 }
 
 .copyable-item {
@@ -796,14 +987,14 @@
 }
 
 .copyable-item:hover {
-    background-color: rgba(138, 180, 248, 0.1);
-    color: #8ab4f8;
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Match the Main TSS blue color */
 }
 
 .copyable-item.copied {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #e3f2fd; /* Light blue background */
+    color: #1976d2; /* Darker blue text */
+    border: 1px solid #5fa8d3; /* Blue border */
 }
 
 .copyable-item.copied::after {
@@ -812,7 +1003,7 @@
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    color: #155724;
+    color: #1976d2; /* Blue tick color */
     font-weight: bold;
     font-size: 0.875rem;
 }
@@ -1474,9 +1665,9 @@
 }
 
 #mainTssData.copied {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #e3f2fd; /* Light blue background */
+    color: #1976d2; /* Darker blue text */
+    border: 1px solid #5fa8d3; /* Blue border */
 }
 
 #mainTssData.copied::after {
@@ -1485,7 +1676,7 @@
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #155724;
+    color: #1976d2; /* Blue tick color */
     font-weight: bold;
     font-size: 1rem;
     line-height: 1; /* Ensure tick stays on same line */
@@ -1514,9 +1705,9 @@
 }
 
 #altTss1.copied, #altTss2.copied {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #e3f2fd; /* Light blue background */
+    color: #1976d2; /* Darker blue text */
+    border: 1px solid #5fa8d3; /* Blue border */
 }
 
 #altTss1.copied::after, #altTss2.copied::after {
@@ -1525,7 +1716,7 @@
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #155724;
+    color: #1976d2; /* Blue tick color */
     font-weight: bold;
     font-size: 1rem;
 }
@@ -1556,17 +1747,79 @@
     box-shadow: none !important;
 }
 
+/* Host Gene Information Section - Main TSS */
+.host-gene-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #5fa8d3; /* Sky blue color for Host Gene Information */
+}
+
+.host-gene-info h4 {
+    color: #5fa8d3; /* Sky blue color for the title */
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.info-value {
+    color: #6c757d;
+    font-family: 'Courier New', monospace;
+    background-color: transparent;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.no-host-gene {
+    text-align: center;
+    padding: 1rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.no-host-gene p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
 /* Supporting Evidence Details Section - Main TSS */
 .supporting-evidence {
     margin-top: 1rem;
     padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 8px;
-    border-left: 4px solid #5fa8d3; /* Sky blue color for Main TSS */
+    border-left: 4px solid #595457; /* Dark gray color for Supporting Evidence Details */
 }
 
 .supporting-evidence h4 {
-    color: #5fa8d3; /* Sky blue color for the title */
+    color: #595457; /* Dark gray color for the title */
     margin-bottom: 1rem;
     font-size: 1.1rem;
     font-weight: 600;
@@ -1610,7 +1863,9 @@
 /* Ensure the Strand header also has consistent alignment */
 .table-header .table-cell:nth-child(3) {
     padding-left: 1.2rem; /* Match the data cell padding for perfect alignment */
-} 
+}
+
+ 
 
 /* Make collapsible headers look clickable */
 .collapsible-header {

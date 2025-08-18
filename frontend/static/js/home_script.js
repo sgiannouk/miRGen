@@ -1392,22 +1392,52 @@ function initializeDetailsButton() {
 // Show Main TSS Details
 function showMainTssDetails() {
     const supportingEvidence = document.getElementById('supportingEvidence');
+    const hostGeneInfo = document.getElementById('hostGeneInfo');
     const detailsBtn = document.getElementById('mainTssDetails');
     
-    if (supportingEvidence && detailsBtn) {
+    if (supportingEvidence && hostGeneInfo && detailsBtn) {
         const isVisible = supportingEvidence.style.display !== 'none';
         
         if (isVisible) {
-            // Hide the section
+            // Hide both sections
             supportingEvidence.style.display = 'none';
-            detailsBtn.innerHTML = '<i class="fas fa-info-circle"></i> Details';
+            hostGeneInfo.style.display = 'none';
+            detailsBtn.innerHTML = '<i class="fas fa-info-circle"></i> Show Details';
             detailsBtn.classList.remove('active');
         } else {
-            // Show the section
+            // Show both sections
             supportingEvidence.style.display = 'block';
+            hostGeneInfo.style.display = 'block';
             detailsBtn.innerHTML = '<i class="fas fa-times"></i> Hide Details';
             detailsBtn.classList.add('active');
         }
+    }
+}
+
+// Function to set host gene information (call this when data is available)
+function setHostGeneInfo(hasHostGene, hostGeneData = null) {
+    const hostGeneInfoContent = document.getElementById('hostGeneInfoContent');
+    const noHostGeneContent = document.getElementById('noHostGeneContent');
+    
+    if (hasHostGene && hostGeneData && hostGeneInfoContent && noHostGeneContent) {
+        // Show host gene information
+        hostGeneInfoContent.style.display = 'block';
+        noHostGeneContent.style.display = 'none';
+        
+        // Update the values if provided
+        if (hostGeneData.id) {
+            document.querySelector('#hostGeneInfoContent .info-item:nth-child(1) .info-value').textContent = hostGeneData.id;
+        }
+        if (hostGeneData.name) {
+            document.querySelector('#hostGeneInfoContent .info-item:nth-child(2) .info-value').textContent = hostGeneData.name;
+        }
+        if (hostGeneData.type) {
+            document.querySelector('#hostGeneInfoContent .info-item:nth-child(3) .info-value').textContent = hostGeneData.type;
+        }
+    } else if (!hasHostGene && hostGeneInfoContent && noHostGeneContent) {
+        // Show "no host gene" message
+        hostGeneInfoContent.style.display = 'none';
+        noHostGeneContent.style.display = 'block';
     }
 }
 
