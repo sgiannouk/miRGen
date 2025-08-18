@@ -567,28 +567,28 @@ function getBasicInfoData(mirnaName, organismVersion) {
     const mockData = {
         'hsa-let-7a-1': {
             fullName: 'Homo sapiens (human) hsa-let-7a-1',
-            sequence: 'UGAGGUAGUAGGUUGUAUAGUU',
+            sequence: 'UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACCCACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA',
             mirbaseAccession: 'MI0000060',
             confidence: 'High',
-            preMirnaCoordinates: 'chr19:41,234,567-41,234,647(+)',
-            ensemblId: 'ENSG00000207959.1',
-            geneName: 'LET7A1',
+            preMirnaCoordinates: 'chr9:94,175,957-94,176,036(+)',
+            ensemblId: 'ENSG00000199165.3',
+            geneName: 'MIRLET7A1',
             matureMirnas: ['hsa-let-7a-5p', 'hsa-let-7a-3p'],
-            matureAccessions: ['MIMAT0000062', 'MIMAT0004481'],
-            matureCoordinates: ['chr19:41,234,567-41,234,588(+)', 'chr19:41,234,626-41,234,647(+)'],
-            matureSequences: ['UGAGGUAGUAGGUUGUAUAGUU', 'CUGUACAGCCUCCUAGCUUUCC']
+            matureAccessions: ['MIMAT0000062_2', 'MIMAT0004481_1'],
+            matureCoordinates: ['chr9:94,175,962-94,175,983(+)', 'chr9:94,176,013-94,176,033(+)'],
+            matureSequences: ['UGAGGUAGUAGGUUGUAUAGUU', 'CUAUACAAUCUACUGUCUUUC']
         },
         'hsa-miR-99b': {
             fullName: 'Homo sapiens (human) hsa-miR-99b',
             sequence: 'AACCCGUAGAUCCGAUCUUGUG',
             mirbaseAccession: 'MI0000109',
             confidence: 'High',
-            preMirnaCoordinates: 'chr19:51692612-51692681(+)',
+            preMirnaCoordinates: 'chr9:51692612-51692681(+)',
             ensemblId: 'ENSG00000207550.1',
             geneName: 'MIR99B',
             matureMirnas: ['hsa-miR-99b-5p', 'hsa-miR-99b-3p'],
             matureAccessions: ['MIMAT0000689', 'MIMAT0004678'],
-            matureCoordinates: ['chr19:51692618-51692639(+)', 'chr19:51692656-51692677(+)'],
+            matureCoordinates: ['chr9:51692618-51692639(+)', 'chr9:51692656-51692677(+)'],
             matureSequences: ['AACCCGUAGAUCCGAUCUUGUG', 'CAAGGCUGUUCGUGGUGGAAUC']
         },
         'hsa-miR-21': {
@@ -623,16 +623,16 @@ function getBasicInfoData(mirnaName, organismVersion) {
     const organismDisplay = getOrganismDisplayName(organismVersion);
     return mockData[mirnaName] || {
         fullName: `${organismDisplay} ${mirnaName}`,
-        sequence: 'UGAGGUAGUAGGUUGUAUAGUU',
+        sequence: 'UGGGAUGAGGUAGUAGGUUGUAUAGUUUUAGGGUCACACCCACCACUGGGAGAUAACUAUACAAUCUACUGUCUUUCCUA',
         mirbaseAccession: 'MI0000000',
         confidence: 'Medium',
-        preMirnaCoordinates: 'chr1:1000000-1000080(+)',
+        preMirnaCoordinates: 'chr9:1000000-1000081(+)',
         ensemblId: '', // Empty to hide the row
         geneName: '', // Empty to hide the row
         matureMirnas: [`${mirnaName}-5p`, `${mirnaName}-3p`],
         matureAccessions: ['MIMAT0000000', 'MIMAT0000001'],
-        matureCoordinates: ['chr1:1000006-1000027(+)', 'chr1:1000060-1000081(+)'],
-        matureSequences: ['UGAGGUAGUAGGUUGUAUAGUU', 'CUGUACAGCCUCCUAGCUUUCC']
+        matureCoordinates: ['chr9:1000006-1000027(+)', 'chr9:1000060-1000081(+)'],
+        matureSequences: ['UGAGGUAGUAGGUUGUAGGUU', 'CUGUACAGCCUCCUAGCUUUCC']
     };
 }
 
@@ -874,9 +874,9 @@ function showExampleResults() {
         organism: 'Human',
         genome_version: 'GRCh38/hg38',
         tss_count: 3,
-        chromosome: 'chr19',
+        chromosome: 'chr9',
         strand: '+',
-        coordinates: '41,234,567',
+        coordinates: '94,166,274',
         expression_level: 'High',
         confidence_score: 0.95
     };
@@ -1152,11 +1152,11 @@ async function performSearch(organism, mirnaName, genomeVersion) {
             name: mirnaName,
             organism: organism,
             genome_version: genomeVersion,
-            chromosome: 'chr19',
+            chromosome: 'chr9',
             strand: '+',
-            start: '41,234,567',
-            end: '41,234,647',
-            tss: '41,234,567',
+            start: '94,175,957',
+            end: '94,175,036',
+            tss: '94,166,274',
             confidence: 'High',
             expression: 'Expressed',
             target_genes: 156,
@@ -1167,11 +1167,11 @@ async function performSearch(organism, mirnaName, genomeVersion) {
             name: mirnaName + '-2',
             organism: organism,
             genome_version: genomeVersion,
-            chromosome: 'chr19',
-            strand: '-',
-            start: '41,234,590',
-            end: '41,234,670',
-            tss: '41,234,670',
+            chromosome: 'chr9',
+            strand: '+',
+            start: '94,166,284',
+            end: '94,166,284',
+            tss: '94,166,284',
             confidence: 'Medium',
             expression: 'Low',
             target_genes: 89,
@@ -1302,15 +1302,37 @@ function initializeClickToCopy() {
             }
             
             const textToCopy = this.textContent.trim();
+            let displayLength = null;
+            
+            // Special handling for coordinates to show length
+            if (this.id === 'preMirnaCoordinates' || this.id === 'matureCoordinates' || 
+                textToCopy.includes('chr') && textToCopy.includes(':')) {
+                displayLength = calculateCoordinateLength(textToCopy);
+                if (displayLength !== null) {
+                    displayLength = `${displayLength} bp`; // Show as base pairs for coordinates
+                }
+            }
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    showCopySuccess(this);
+                    if (displayLength !== null) {
+                        showCopySuccessWithLength(this, displayLength);
+                    } else {
+                        showCopySuccess(this);
+                    }
                 }).catch(() => {
-                    fallbackCopyTextToClipboard(textToCopy, this);
+                    if (displayLength !== null) {
+                        fallbackCopyTextToClipboardWithLength(textToCopy, this, displayLength);
+                    } else {
+                        fallbackCopyTextToClipboard(textToCopy, this);
+                    }
                 });
             } else {
-                fallbackCopyTextToClipboard(textToCopy, this);
+                if (displayLength !== null) {
+                    fallbackCopyTextToClipboardWithLength(textToCopy, this, displayLength);
+                } else {
+                    fallbackCopyTextToClipboard(textToCopy, this);
+                }
             }
         });
     });
@@ -1319,30 +1341,44 @@ function initializeClickToCopy() {
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('sequence-text')) {
             const textToCopy = e.target.textContent.trim();
+            const sequenceLength = textToCopy.length;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    showCopySuccess(e.target);
+                    showCopySuccessWithLength(e.target, sequenceLength);
                 }).catch(() => {
-                    fallbackCopyTextToClipboard(textToCopy, e.target);
+                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength);
                 });
             } else {
-                fallbackCopyTextToClipboard(textToCopy, e.target);
+                fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength);
             }
         }
         
         // Handle copyable items (individual items in multi-line values)
         if (e.target.classList.contains('copyable-item')) {
-            const textToCopy = e.target.textContent.trim();
+            let textToCopy = e.target.textContent.trim();
+            let displayLength = textToCopy.length;
+            
+            // Extract just the sequence from "5' - SEQUENCE - 3'" format
+            if (textToCopy.includes("5' -") && textToCopy.includes("- 3'")) {
+                textToCopy = textToCopy.replace("5' - ", "").replace(" - 3'", "");
+                displayLength = textToCopy.length;
+            } else if (/^chr\d+:\d{1,3}(?:,\d{3})*-\d{1,3}(?:,\d{3})*\([+-]\)$/.test(textToCopy)) {
+                // Coordinate string: compute genomic length in base pairs
+                const bpLen = calculateCoordinateLength(textToCopy);
+                if (bpLen !== null) {
+                    displayLength = `${bpLen} bp`;
+                }
+            }
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    showCopySuccess(e.target);
+                    showCopySuccessWithLength(e.target, displayLength);
                 }).catch(() => {
-                    fallbackCopyTextToClipboard(textToCopy, e.target);
+                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, displayLength);
                 });
             } else {
-                fallbackCopyTextToClipboard(textToCopy, e.target);
+                fallbackCopyTextToClipboardWithLength(textToCopy, e.target, displayLength);
             }
         }
     });
@@ -1354,6 +1390,52 @@ function showCopySuccess(element) {
     
     setTimeout(() => {
         element.classList.remove('copied');
+    }, 2000);
+}
+
+// Show Copy Success with Length
+function showCopySuccessWithLength(element, length) {
+    element.classList.add('copied');
+    
+    // Create and show length tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'copy-length-tooltip';
+    
+    // Determine the unit to display
+    let unit = 'nt'; // Default to nucleotides
+    if (typeof length === 'string' && length.includes('bp')) {
+        unit = ''; // Don't add unit if it's already included
+        tooltip.textContent = length;
+    } else {
+        tooltip.textContent = `${length} ${unit}`;
+    }
+    
+    tooltip.style.cssText = `
+        position: absolute;
+        background: #28a745;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 1000;
+        pointer-events: none;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    `;
+    
+    // Position tooltip near the cursor
+    const rect = element.getBoundingClientRect();
+    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+    tooltip.style.top = (rect.top - 40) + 'px';
+    
+    document.body.appendChild(tooltip);
+    
+    setTimeout(() => {
+        element.classList.remove('copied');
+        if (tooltip.parentNode) {
+            tooltip.parentNode.removeChild(tooltip);
+        }
     }, 2000);
 }
 
@@ -1376,6 +1458,50 @@ function fallbackCopyTextToClipboard(text, element) {
     }
     
     document.body.removeChild(textArea);
+}
+
+// Fallback Copy Function with Length
+function fallbackCopyTextToClipboardWithLength(text, element, length) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopySuccessWithLength(element, length);
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Calculate coordinate length - Generic function for any miRNA coordinates
+function calculateCoordinateLength(coordinateText) {
+    // Parse coordinate format: chrX:start-end(strand) where X is chromosome number
+    // Examples: chr9:94,175,957-94,176,036(+), chr19:41,234,567-41,234,647(+)
+    const match = coordinateText.match(/chr\d+:(\d+(?:,\d+)*)-(\d+(?:,\d+)*)\(([+-])\)/);
+    if (match) {
+        const start = parseInt(match[1].replace(/,/g, ''));
+        const end = parseInt(match[2].replace(/,/g, ''));
+        const strand = match[3];
+        
+        let length;
+        if (strand === '+') {
+            length = end - start;
+        } else {
+            length = start - end;
+        }
+        
+        // Always add 1 to the calculated length for all coordinate calculations
+        return length + 1;
+    }
+    return null;
 }
 
 // Initialize Details Button Functionality
@@ -1532,7 +1658,7 @@ function copyAltTssPosition(tssNumber) {
     const strand = document.querySelector(`#altTss${tssNumber} .table-cell:nth-child(3)`).textContent;
     
     // Use the same chromosome as Main TSS for consistency
-    const chromosome = 'chr19';
+    const chromosome = 'chr9';
     
     const positionFormat = `${chromosome}:${position}(${strand})`;
     
@@ -1590,54 +1716,54 @@ function toggleTfContainer() {
 
 // Mock TF data for testing (will be replaced with database data later)
 const mockTFData = [
-    { name: 'SP1', start: '41,234,450', end: '41,234,470', score: 0.89, type: 'Cell line' },
-    { name: 'AP-1', start: '41,234,580', end: '41,234,600', score: 0.76, type: 'Brain' },
-    { name: 'NF-κB', start: '41,234,700', end: '41,234,725', score: 0.82, type: 'Liver' },
-    { name: 'MYC', start: '41,234,800', end: '41,234,820', score: 0.91, type: 'Cell line' },
-    { name: 'CTCF', start: '41,234,900', end: '41,234,925', score: 0.78, type: 'Heart' },
-    { name: 'E2F1', start: '41,235,000', end: '41,235,020', score: 0.85, type: 'Kidney' },
-    { name: 'STAT3', start: '41,235,100', end: '41,235,125', score: 0.73, type: 'Brain' },
-    { name: 'CREB', start: '41,235,200', end: '41,235,225', score: 0.88, type: 'Liver' },
-    { name: 'FOXO1', start: '41,235,300', end: '41,235,320', score: 0.79, type: 'Heart' },
-    { name: 'HIF1A', start: '41,235,400', end: '41,235,425', score: 0.92, type: 'Cell line' },
-    { name: 'PPARG', start: '41,235,500', end: '41,235,525', score: 0.81, type: 'Kidney' },
-    { name: 'SREBF1', start: '41,235,600', end: '41,235,625', score: 0.87, type: 'Brain' },
-    { name: 'NRF2', start: '41,235,700', end: '41,235,725', score: 0.84, type: 'Liver' },
-    { name: 'TP53', start: '41,235,800', end: '41,235,825', score: 0.95, type: 'Cell line' },
-    { name: 'RB1', start: '41,235,900', end: '41,235,925', score: 0.77, type: 'Heart' },
-    { name: 'BRCA1', start: '41,236,000', end: '41,236,025', score: 0.86, type: 'Cell line' },
-    { name: 'ATM', start: '41,236,100', end: '41,236,125', score: 0.83, type: 'Brain' },
-    { name: 'CHEK2', start: '41,236,200', end: '41,236,225', score: 0.79, type: 'Liver' },
-    { name: 'PARP1', start: '41,236,300', end: '41,236,325', score: 0.88, type: 'Heart' },
-    { name: 'XRCC1', start: '41,236,400', end: '41,236,425', score: 0.75, type: 'Kidney' },
-    { name: 'LIG4', start: '41,236,500', end: '41,236,525', score: 0.82, type: 'Cell line' },
-    { name: 'KU70', start: '41,236,600', end: '41,236,625', score: 0.89, type: 'Brain' },
-    { name: 'KU80', start: '41,236,700', end: '41,236,725', score: 0.91, type: 'Liver' },
-    { name: 'DNAPK', start: '41,236,800', end: '41,236,825', score: 0.87, type: 'Heart' },
-    { name: 'RAD51', start: '41,236,900', end: '41,236,925', score: 0.93, type: 'Kidney' },
-    { name: 'BRCA2', start: '41,237,000', end: '41,237,025', score: 0.85, type: 'Cell line' },
-    { name: 'PALB2', start: '41,237,100', end: '41,237,125', score: 0.78, type: 'Brain' },
-    { name: 'FANCD2', start: '41,237,200', end: '41,237,225', score: 0.81, type: 'Liver' },
-    { name: 'FANCA', start: '41,237,300', end: '41,237,325', score: 0.76, type: 'Heart' },
-    { name: 'FANCC', start: '41,237,400', end: '41,237,425', score: 0.84, type: 'Kidney' },
-    { name: 'FANCE', start: '41,237,500', end: '41,237,525', score: 0.79, type: 'Cell line' },
-    { name: 'FANCF', start: '41,237,600', end: '41,237,625', score: 0.86, type: 'Brain' },
-    { name: 'FANCG', start: '41,237,700', end: '41,237,725', score: 0.88, type: 'Liver' },
-    { name: 'FANCL', start: '41,237,800', end: '41,237,825', score: 0.82, type: 'Heart' },
-    { name: 'FANCM', start: '41,237,900', end: '41,237,925', score: 0.90, type: 'Kidney' },
-    { name: 'FANCN', start: '41,238,000', end: '41,238,025', score: 0.77, type: 'Cell line' },
-    { name: 'FANCO', start: '41,238,100', end: '41,238,125', score: 0.85, type: 'Brain' },
-    { name: 'FANCP', start: '41,238,200', end: '41,238,225', score: 0.83, type: 'Liver' },
-    { name: 'FANCQ', start: '41,238,300', end: '41,238,325', score: 0.89, type: 'Heart' },
-    { name: 'FANCR', start: '41,238,400', end: '41,238,425', score: 0.91, type: 'Kidney' },
-    { name: 'FANCS', start: '41,238,500', end: '41,238,525', score: 0.87, type: 'Cell line' },
-    { name: 'FANCT', start: '41,238,600', end: '41,238,625', score: 0.80, type: 'Brain' },
-    { name: 'FANCU', start: '41,238,700', end: '41,238,725', score: 0.86, type: 'Liver' },
-    { name: 'FANCV', start: '41,238,800', end: '41,238,825', score: 0.92, type: 'Heart' },
-    { name: 'FANCW', start: '41,238,900', end: '41,238,925', score: 0.79, type: 'Kidney' },
-    { name: 'FANCX', start: '41,239,000', end: '41,239,025', score: 0.88, type: 'Cell line' },
-    { name: 'FANCY', start: '41,239,100', end: '41,239,125', score: 0.84, type: 'Brain' },
-    { name: 'FANCZ', start: '41,239,200', end: '41,239,225', score: 0.90, type: 'Liver' }
+    { name: 'SP1', start: '94,166,250', end: '94,166,270', score: 0.89, type: 'Cell line' },
+    { name: 'AP-1', start: '94,166,280', end: '94,166,300', score: 0.76, type: 'Brain' },
+    { name: 'NF-κB', start: '94,166,400', end: '94,166,425', score: 0.82, type: 'Liver' },
+    { name: 'MYC', start: '94,166,500', end: '94,166,520', score: 0.91, type: 'Cell line' },
+    { name: 'CTCF', start: '94,166,600', end: '94,166,625', score: 0.78, type: 'Heart' },
+    { name: 'E2F1', start: '94,166,700', end: '94,166,720', score: 0.85, type: 'Kidney' },
+    { name: 'STAT3', start: '94,166,800', end: '94,166,825', score: 0.73, type: 'Brain' },
+    { name: 'CREB', start: '94,166,900', end: '94,166,925', score: 0.88, type: 'Liver' },
+    { name: 'FOXO1', start: '94,167,000', end: '94,167,020', score: 0.79, type: 'Heart' },
+    { name: 'HIF1A', start: '94,167,100', end: '94,167,125', score: 0.92, type: 'Cell line' },
+    { name: 'PPARG', start: '94,167,200', end: '94,167,225', score: 0.81, type: 'Kidney' },
+    { name: 'SREBF1', start: '94,167,300', end: '94,167,325', score: 0.87, type: 'Brain' },
+    { name: 'NRF2', start: '94,167,400', end: '94,167,425', score: 0.84, type: 'Liver' },
+    { name: 'TP53', start: '94,167,500', end: '94,167,525', score: 0.95, type: 'Cell line' },
+    { name: 'RB1', start: '94,167,600', end: '94,167,625', score: 0.77, type: 'Heart' },
+    { name: 'BRCA1', start: '94,167,700', end: '94,167,725', score: 0.86, type: 'Cell line' },
+    { name: 'ATM', start: '94,167,800', end: '94,167,825', score: 0.83, type: 'Brain' },
+    { name: 'CHEK2', start: '94,167,900', end: '94,167,925', score: 0.79, type: 'Liver' },
+    { name: 'PARP1', start: '94,168,000', end: '94,168,025', score: 0.88, type: 'Heart' },
+    { name: 'XRCC1', start: '94,168,100', end: '94,168,125', score: 0.75, type: 'Kidney' },
+    { name: 'LIG4', start: '94,168,200', end: '94,168,225', score: 0.82, type: 'Cell line' },
+    { name: 'KU70', start: '94,168,300', end: '94,168,325', score: 0.89, type: 'Brain' },
+    { name: 'KU80', start: '94,168,400', end: '94,168,425', score: 0.91, type: 'Liver' },
+    { name: 'DNAPK', start: '94,168,500', end: '94,168,525', score: 0.87, type: 'Heart' },
+    { name: 'RAD51', start: '94,168,600', end: '94,168,625', score: 0.93, type: 'Kidney' },
+    { name: 'BRCA2', start: '94,168,700', end: '94,168,725', score: 0.85, type: 'Cell line' },
+    { name: 'PALB2', start: '94,168,800', end: '94,168,825', score: 0.78, type: 'Brain' },
+    { name: 'FANCD2', start: '94,168,900', end: '94,168,925', score: 0.81, type: 'Liver' },
+    { name: 'FANCA', start: '94,169,000', end: '94,169,025', score: 0.76, type: 'Heart' },
+    { name: 'FANCC', start: '94,169,100', end: '94,169,125', score: 0.84, type: 'Kidney' },
+    { name: 'FANCE', start: '94,169,200', end: '94,169,225', score: 0.79, type: 'Cell line' },
+    { name: 'FANCF', start: '94,169,300', end: '94,169,325', score: 0.86, type: 'Brain' },
+    { name: 'FANCG', start: '94,169,400', end: '94,169,425', score: 0.88, type: 'Liver' },
+    { name: 'FANCL', start: '94,169,500', end: '94,169,525', score: 0.82, type: 'Heart' },
+    { name: 'FANCM', start: '94,169,600', end: '94,169,625', score: 0.90, type: 'Kidney' },
+    { name: 'FANCN', start: '94,169,700', end: '94,169,725', score: 0.77, type: 'Cell line' },
+    { name: 'FANCO', start: '94,169,800', end: '94,169,825', score: 0.85, type: 'Brain' },
+    { name: 'FANCP', start: '94,169,900', end: '94,169,925', score: 0.83, type: 'Liver' },
+    { name: 'FANCQ', start: '94,170,000', end: '94,170,025', score: 0.89, type: 'Heart' },
+    { name: 'FANCR', start: '94,170,100', end: '94,170,125', score: 0.91, type: 'Kidney' },
+    { name: 'FANCS', start: '94,170,200', end: '94,170,225', score: 0.87, type: 'Cell line' },
+    { name: 'FANCT', start: '94,170,300', end: '94,170,325', score: 0.80, type: 'Brain' },
+    { name: 'FANCU', start: '94,170,400', end: '94,170,425', score: 0.86, type: 'Liver' },
+    { name: 'FANCV', start: '94,170,500', end: '94,170,525', score: 0.92, type: 'Heart' },
+    { name: 'FANCW', start: '94,170,600', end: '94,170,625', score: 0.79, type: 'Kidney' },
+    { name: 'FANCX', start: '94,170,700', end: '94,170,725', score: 0.88, type: 'Cell line' },
+    { name: 'FANCY', start: '94,170,800', end: '94,170,825', score: 0.84, type: 'Brain' },
+    { name: 'FANCZ', start: '94,170,900', end: '94,170,925', score: 0.90, type: 'Liver' }
 ];
 
 // TF Filter Manager Class
