@@ -27,7 +27,7 @@
                         <label for="organism">Organism</label>
                         <select id="organism" name="organism" required>
                             <option value="human_GRCh38" data-display="Human" selected>Human (GRCh38/hg38)</option>
-                            <option value="mouse_GRCm39" data-display="Mouse">Mouse (GRCm39/mm39)</option>
+                            <option value="mouse_GRCm38" data-display="Mouse">Mouse (GRCm38/mm10)</option>
                         </select>
                     </div>
 
@@ -77,7 +77,7 @@
         <div class="result-header">
             <h3 class="result-title">
                 <i class='bx bx-info-circle'></i>
-                Basic Information for <span id="mirnaDisplayName">hsa-let-7a-5p</span>
+                Basic Information for <span id="mirnaDisplayName" class="copyable-item" title="Click to copy miRNA name">hsa-let-7a-5p</span>
             </h3>
         </div>
         <div class="result-content">
@@ -172,29 +172,8 @@
             </h3>
         </div>
         <div class="result-content">
-            <div class="genome-view">
-                <div class="genome-track">
-                    <div class="tss-block main-tss" title="Main TSS">
-                        <span class="tss-label">Main TSS</span>
-                    </div>
-                    <div class="tss-block alt-tss" title="Alt TSS 1">
-                        <span class="tss-label">Alt TSS 1</span>
-                    </div>
-                    <div class="tss-block alt-tss" title="Alt TSS 2">
-                        <span class="tss-label">Alt TSS 2</span>
-                    </div>
-                </div>
-                <div class="tf-track">
-                    <div class="tf-block" title="MYC">
-                        <span class="tf-label">MYC</span>
-                    </div>
-                    <div class="tf-block" title="SP1">
-                        <span class="tf-label">SP1</span>
-                    </div>
-                    <div class="tf-block" title="CTCF">
-                        <span class="tf-label">CTCF</span>
-                    </div>
-                </div>
+            <div id="genome-browser-container" class="genome-browser-container">
+                <!-- Genome Browser will be initialized here -->
             </div>
         </div>
     </div>
@@ -492,8 +471,10 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=alt_route,browse,location_on,tune" />
 <link rel="stylesheet" href="{% static 'css/home_style.css' %}">
+<link rel="stylesheet" href="{% static 'css/genome_browser_style.css' %}">
 {% endblock %}
 
 {% block extra_js %}
     <script src="{% static 'js/home_script.js' %}"></script>
+    <script src="{% static 'js/genome_browser_script.js' %}"></script>
 {% endblock %}

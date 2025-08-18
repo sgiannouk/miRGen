@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.home_view, name='home'),
     path('test/', views.test_view, name='test'),
+    path('genome-browser-test/', views.genome_browser_test_view, name='genome_browser_test'),
     path('search/', views.search_view, name='search'),
     path('browse/', views.browse_view, name='browse'),
     path('download/', views.download_view, name='download'),

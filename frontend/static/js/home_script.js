@@ -462,10 +462,16 @@ function showSearchResults(mirnaName, organismVersion) {
     const mirnaDisplayName = document.getElementById('mirnaDisplayName');
     if (mirnaDisplayName) {
         mirnaDisplayName.textContent = mirnaName;
+        // Add copyable-item class for click-to-copy functionality
+        mirnaDisplayName.className = 'copyable-item';
+        mirnaDisplayName.title = 'Click to copy miRNA name';
     }
     
     // Update Basic Information fields
     updateBasicInformation(mirnaName, organismVersion);
+    
+    // Initialize Genome Browser
+    initializeGenomeBrowser(mirnaName, organismVersion);
     
     // Show the results container
     searchResults.style.display = 'grid';
@@ -615,7 +621,7 @@ function getBasicInfoData(mirnaName, organismVersion) {
             matureMirnas: ['mmu-let-7g-5p', 'mmu-let-7g-3p'],
             matureAccessions: ['MIMAT0000128', 'MIMAT0004679'],
             matureCoordinates: ['chr9:106056795-106056816(+)', 'chr9:106056832-106056853(+)'],
-            matureSequences: ['UGAGGUAGUAGGUUGUACAGUU', 'CUGUACAGCCUCCUAGCUUUCC']
+            matureSequences: ['UGAGGUAGUAGGUAGUACAGUU', 'CUGUACAGCCUCCUAGCUUUCC']
         }
     };
     
@@ -1340,18 +1346,71 @@ function initializeClickToCopy() {
     // Handle sequence text (copy only the sequence)
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('sequence-text')) {
+            console.log('Sequence text clicked:', e.target);
             const textToCopy = e.target.textContent.trim();
-            const sequenceLength = textToCopy.length;
+            console.log('Text to copy:', textToCopy);
+            console.log('Has pre-mirna-sequence class:', e.target.classList.contains('pre-mirna-sequence'));
             
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    showCopySuccessWithLength(e.target, sequenceLength);
-                }).catch(() => {
-                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength);
-                });
+            // Always show length for Pre-miRNA Sequence (has pre-mirna-sequence class)
+            if (e.target.classList.contains('pre-mirna-sequence')) {
+                const sequenceLength = textToCopy.length;
+                console.log('Pre-miRNA sequence length:', sequenceLength);
+                
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        console.log('Sequence copied successfully, showing length tooltip');
+                        // Show copy feedback on the entire sequence wrapper (including 5' and 3' labels)
+                        const sequenceWrapper = e.target.closest('.sequence-wrapper');
+                        if (sequenceWrapper) {
+                            showCopySuccessWithLength(sequenceWrapper, sequenceLength + ' nt');
+                        } else {
+                            showCopySuccessWithLength(e.target, sequenceLength + ' nt');
+                        }
+                    }).catch((error) => {
+                        console.error('Clipboard write failed:', error);
+                        fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
+                    });
+                } else {
+                    console.log('Clipboard API not available, using fallback');
+                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
+                }
             } else {
-                fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength);
+                console.log('Not a pre-miRNA sequence, copying without length');
+                // For other sequence text (like mature sequences), don't show length
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        showCopySuccess(e.target);
+                    }).catch(() => {
+                        fallbackCopyTextToClipboard(textToCopy, e.target);
+                    });
+                } else {
+                    fallbackCopyTextToClipboard(textToCopy, e.target);
+                }
             }
+        }
+        
+        // Handle 5' and 3' labels - make them clickable to copy the sequence
+        if (e.target.classList.contains('sequence-5p') || e.target.classList.contains('sequence-3p')) {
+            const sequenceText = e.target.closest('.sequence-wrapper').querySelector('.sequence-text');
+            if (sequenceText && sequenceText.classList.contains('pre-mirna-sequence')) {
+                const textToCopy = sequenceText.textContent.trim();
+                const sequenceLength = textToCopy.length;
+                
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // Show copy feedback on the entire sequence wrapper
+                        const sequenceWrapper = e.target.closest('.sequence-wrapper');
+                        if (sequenceWrapper) {
+                            showCopySuccessWithLength(sequenceWrapper, sequenceLength + ' nt');
+                        }
+                    }).catch(() => {
+                        fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
+                    });
+                } else {
+                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
+                }
+            }
+            return;
         }
         
         // Handle copyable items (individual items in multi-line values)
@@ -1359,26 +1418,63 @@ function initializeClickToCopy() {
             let textToCopy = e.target.textContent.trim();
             let displayLength = textToCopy.length;
             
-            // Extract just the sequence from "5' - SEQUENCE - 3'" format
-            if (textToCopy.includes("5' -") && textToCopy.includes("- 3'")) {
-                textToCopy = textToCopy.replace("5' - ", "").replace(" - 3'", "");
+            // Special handling for miRNA name - copy with blue feedback like other items
+            if (e.target.id === 'mirnaDisplayName') {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        showCopySuccess(e.target); // Show blue copy feedback
+                    }).catch(() => {
+                        fallbackCopyTextToClipboard(textToCopy, e.target);
+                    });
+                } else {
+                    fallbackCopyTextToClipboard(textToCopy, e.target);
+                }
+                return; // Exit early for miRNA name
+            }
+            
+            // Only show length for specific fields: Pre-miRNA Sequence, Pre-miRNA Coordinates, Mature Sequences, Mature Coordinates
+            let shouldShowLength = false;
+            
+            // Check if this is a Pre-miRNA Sequence (has the pre-mirna-sequence class)
+            if (e.target.classList.contains('pre-mirna-sequence')) {
+                shouldShowLength = true;
                 displayLength = textToCopy.length;
-            } else if (/^chr\d+:\d{1,3}(?:,\d{3})*-\d{1,3}(?:,\d{3})*\([+-]\)$/.test(textToCopy)) {
-                // Coordinate string: compute genomic length in base pairs
+            }
+            // Check if this is a coordinate string (Pre-miRNA Coordinates or Mature Coordinates)
+            else if (/^chr\d+:\d{1,3}(?:,\d{3})*-\d{1,3}(?:,\d{3})*\([+-]\)$/.test(textToCopy)) {
+                shouldShowLength = true;
                 const bpLen = calculateCoordinateLength(textToCopy);
                 if (bpLen !== null) {
                     displayLength = `${bpLen} bp`;
                 }
             }
+            // Check if this is a mature sequence (5' - SEQUENCE - 3' format)
+            else if (textToCopy.includes("5' -") && textToCopy.includes("- 3'")) {
+                shouldShowLength = true;
+                textToCopy = textToCopy.replace("5' - ", "").replace(" - 3'", "");
+                displayLength = textToCopy.length;
+            }
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    showCopySuccessWithLength(e.target, displayLength);
+                    if (shouldShowLength) {
+                        showCopySuccessWithLength(e.target, displayLength);
+                    } else {
+                        showCopySuccess(e.target);
+                    }
                 }).catch(() => {
-                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, displayLength);
+                    if (shouldShowLength) {
+                        fallbackCopyTextToClipboardWithLength(textToCopy, e.target, displayLength);
+                    } else {
+                        fallbackCopyTextToClipboard(textToCopy, e.target);
+                    }
                 });
             } else {
-                fallbackCopyTextToClipboardWithLength(textToCopy, e.target, displayLength);
+                if (shouldShowLength) {
+                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, displayLength);
+                } else {
+                    fallbackCopyTextToClipboard(textToCopy, e.target);
+                }
             }
         }
     });
@@ -1567,12 +1663,75 @@ function setHostGeneInfo(hasHostGene, hostGeneData = null) {
     }
 }
 
+// Initialize Genome Browser
+function initializeGenomeBrowser(mirnaName, organismVersion) {
+    try {
+        // Check if GenomeBrowserView is available
+        if (typeof GenomeBrowserView === 'undefined') {
+            throw new Error('GenomeBrowserView class not found. Please ensure genome_browser_script.js is loaded.');
+        }
+        
+        // Get miRNA data for the browser
+        const basicInfo = getBasicInfoData(mirnaName, organismVersion);
+        
+        // Create miRNA data object for the browser
+        const mirnaData = {
+            name: mirnaName,
+            organism: organismVersion,
+            preMirnaCoordinates: basicInfo.preMirnaCoordinates,
+            matureCoordinates: basicInfo.matureCoordinates,
+            mainTss: basicInfo.mainTss || `chr9:94,166,274(+)`, // Use TSS data if available
+            alternativeTss: basicInfo.alternativeTss || [
+                `chr9:94,166,284(+)`,
+                `chr9:94,166,278(+)`
+            ],
+            hostGeneCoordinates: basicInfo.hostGeneCoordinates || null
+        };
+        
+        console.log('Initializing Genome Browser with data:', mirnaData);
+        
+        // Initialize the Genome Browser
+        if (window.genomeBrowser) {
+            console.log('Destroying existing genome browser...');
+            window.genomeBrowser.destroy();
+        }
+        
+        console.log('Creating new GenomeBrowserView...');
+        window.genomeBrowser = new GenomeBrowserView('genome-browser-container');
+        
+        console.log('Creating browser...');
+        window.genomeBrowser.createBrowser(mirnaData, organismVersion);
+        
+        console.log('Genome Browser initialization completed for:', mirnaName);
+        
+    } catch (error) {
+        console.error('Failed to initialize Genome Browser:', error);
+        // Show error in the genome browser container
+        const container = document.getElementById('genome-browser-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="genome-browser-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Failed to Initialize Genome Browser</h3>
+                    <p>${error.message}</p>
+                    <button class="retry-btn" onclick="initializeGenomeBrowser('${mirnaName}', '${organismVersion}')">
+                        <i class="fas fa-redo"></i> Retry
+                    </button>
+                </div>
+            `;
+        }
+    }
+}
+
+
+
 // Export functions for use in other scripts
 window.HomePage = {
     initializeHomePage,
     performSearch,
     displaySearchResults,
-    showNotification
+    showNotification,
+    initializeGenomeBrowser
 }; 
 
 // Show Mock Data Message for non-let-7a miRNAs
@@ -1584,6 +1743,9 @@ function showMockDataMessage(mirnaName, organismVersion) {
     const mirnaDisplayName = document.getElementById('mirnaDisplayName');
     if (mirnaDisplayName) {
         mirnaDisplayName.textContent = mirnaName;
+        // Add copyable-item class for click-to-copy functionality
+        mirnaDisplayName.className = 'copyable-item';
+        mirnaDisplayName.title = 'Click to copy miRNA name';
     }
     
     // Show a message that this is mock data

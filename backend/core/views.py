@@ -20,6 +20,10 @@ def test_view(request):
     }
     return render(request, 'test.html', {'stats': stats})
 
+def genome_browser_test_view(request):
+    """Genome Browser test view"""
+    return render(request, 'test_genome_browser.html')
+
 def home_view(request):
     """Home page view"""
     # Get some statistics for the home page
@@ -54,7 +58,7 @@ def search_view(request):
     # Map organism values to species names
     organism_to_species = {
         'human_GRCh38': 'Human',
-        'mouse_GRCm39': 'Mouse'
+        'mouse_GRCm38': 'Mouse'
     }
     
     species_name = organism_to_species.get(organism, 'Human')  # Default to Human

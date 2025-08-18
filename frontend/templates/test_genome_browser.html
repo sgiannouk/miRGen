@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genome Browser Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/genome_browser_style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 8px;
+        }
+        .test-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .test-btn.success {
+            background: #28a745;
+        }
+        .test-btn.error {
+            background: #dc3545;
+        }
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        .log-info { color: #007bff; }
+        .log-success { color: #28a745; }
+        .log-error { color: #dc3545; }
+        .log-warning { color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-dna"></i> Genome Browser Test</h1>
+            <p>Testing the Genome Browser functionality with mock data</p>
+        </div>
+        
+        <div class="test-controls">
+            <h3>Test Controls</h3>
+            <button class="test-btn" onclick="testBasicFunctionality()">
+                <i class="fas fa-play"></i> Test Basic Functionality
+            </button>
+            <button class="test-btn" onclick="testWithMockData()">
+                <i class="fas fa-database"></i> Test with Mock Data
+            </button>
+            <button class="test-btn" onclick="clearLog()">
+                <i class="fas fa-trash"></i> Clear Log
+            </button>
+            <button class="test-btn" onclick="checkDependencies()">
+                <i class="fas fa-check-circle"></i> Check Dependencies
+            </button>
+        </div>
+        
+        <div id="genome-browser-container" class="genome-browser-container">
+            <!-- Genome Browser will be initialized here -->
+        </div>
+        
+        <div class="log-container" id="logContainer">
+            <div class="log-entry log-info">Ready to test. Click a test button above.</div>
+        </div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="{% static 'js/genome_browser_script.js' %}"></script>
+    <script>
+        let genomeBrowser = null;
+        let testLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push({ message: logEntry, type });
+            
+            const logContainer = document.getElementById('logContainer');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-entry log-${type}`;
+            logDiv.textContent = logEntry;
+            logContainer.appendChild(logDiv);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '';
+            testLog = [];
+            log('Log cleared', 'info');
+        }
+        
+        function checkDependencies() {
+            log('Checking dependencies...', 'info');
+            
+            if (typeof GenomeBrowserView !== 'undefined') {
+                log('✓ GenomeBrowserView class found', 'success');
+            } else {
+                log('✗ GenomeBrowserView class not found', 'error');
+            }
+            
+            if (typeof igv !== 'undefined') {
+                log('✓ igv.js loaded', 'success');
+            } else {
+                log('✗ igv.js not loaded', 'warning');
+            }
+            
+            log('Dependency check completed', 'info');
+        }
+        
+        function testBasicFunctionality() {
+            log('Testing basic Genome Browser functionality...', 'info');
+            
+            try {
+                if (typeof GenomeBrowserView === 'undefined') {
+                    throw new Error('GenomeBrowserView class not available');
+                }
+                
+                log('Creating GenomeBrowserView instance...', 'info');
+                genomeBrowser = new GenomeBrowserView('genome-browser-container');
+                
+                log('✓ Basic functionality test passed', 'success');
+                
+            } catch (error) {
+                log(`✗ Basic functionality test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function testWithMockData() {
+            log('Testing Genome Browser with mock data...', 'info');
+            
+            try {
+                if (!genomeBrowser) {
+                    log('Creating new GenomeBrowserView instance...', 'info');
+                    genomeBrowser = new GenomeBrowserView('genome-browser-container');
+                }
+                
+                const mockData = {
+                    name: 'hsa-let-7a-1',
+                    organism: 'human_GRCh38',
+                    preMirnaCoordinates: 'chr9:94,175,957-94,176,036(+)',
+                    matureCoordinates: [
+                        'chr9:94,175,962-94,175,983(+)',
+                        'chr9:94,176,013-94,176,033(+)'
+                    ],
+                    mainTss: 'chr9:94,166,274(+)',
+                    alternativeTss: [
+                        'chr9:94,166,284(+)',
+                        'chr9:94,166,278(+)'
+                    ],
+                    hostGeneCoordinates: 'chr9:94,166,274-94,176,036(+)'
+                };
+                
+                log('Mock data created, creating browser...', 'info');
+                genomeBrowser.createBrowser(mockData, 'human_GRCh38')
+                    .then(() => {
+                        log('✓ Genome Browser created successfully with mock data', 'success');
+                    })
+                    .catch(error => {
+                        log(`✗ Failed to create browser: ${error.message}`, 'error');
+                    });
+                
+            } catch (error) {
+                log(`✗ Mock data test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-check dependencies on load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, checking dependencies...', 'info');
+            setTimeout(checkDependencies, 1000);
+        });
+    </script>
+</body>
+</html>
