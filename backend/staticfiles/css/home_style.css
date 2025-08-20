@@ -844,6 +844,101 @@
     background: #e3f2fd !important; /* Light blue background */
 }
 
+/* Clean blue highlight for all Basic Information fields - no movement or expansion */
+.info-value.copied,
+.copyable-item.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    border-radius: 4px !important; /* Rounded corners */
+    margin-left: -0.5rem !important; /* Pull blue box to the left for breathing room */
+    padding-left: 0.5rem !important; /* Add space inside the left side */
+    /* Text stays in place, but blue box extends leftward */
+}
+
+/* Special handling for Pre-miRNA Sequence copied state */
+#sequence.copied {
+    background-color: #e3f2fd !important; /* Light blue background */
+    background: #e3f2fd !important; /* Light blue background */
+    position: relative !important; /* Ensure positioning works for tick */
+    border-radius: 4px !important; /* Rounded corners for clean look */
+}
+
+/* Prevent inner sequence elements from showing copied state - more specific */
+#sequence.copied .sequence-wrapper,
+#sequence.copied .sequence-text,
+#sequence.copied .sequence-5p,
+#sequence.copied .sequence-3p,
+#sequence.copied .sequence-wrapper * {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Add tick mark for Pre-miRNA Sequence copied state */
+#sequence.copied::after {
+    content: '✓';
+    position: absolute;
+    right: -25px; /* Position tick outside the container to avoid layout changes */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1976d2; /* Blue tick color */
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+/* Override any existing copied state styles for inner sequence elements */
+#sequence.copied .sequence-wrapper.copied,
+#sequence.copied .sequence-text.copied {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Completely disable copied state for inner sequence elements when outer container is copied */
+#sequence.copied .sequence-wrapper,
+#sequence.copied .sequence-text,
+#sequence.copied .sequence-5p,
+#sequence.copied .sequence-3p,
+#sequence.copied .pre-mirna-sequence {
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Override the existing .sequence-wrapper.copied rule */
+#sequence.copied .sequence-wrapper.copied {
+    background-color: transparent !important;
+    background: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Override the existing .sequence-text.copied rule */
+#sequence.copied .sequence-text.copied {
+    background-color: transparent !important;
+    background: none !important;
+    border: none !important;
+    color: inherit !important;
+}
+
+/* Remove any ticks from inner elements when outer container is copied */
+#sequence.copied .sequence-text.copied::after,
+#sequence.copied .sequence-wrapper.copied::after,
+#sequence.copied .pre-mirna-sequence.copied::after {
+    content: none !important;
+}
+
+/* Override the existing .pre-mirna-sequence.copied rule */
+#sequence.copied .pre-mirna-sequence.copied {
+    background-color: transparent !important;
+    background: none !important;
+    border-color: transparent !important;
+    color: inherit !important;
+}
+
 /* Additional specificity to ensure backgrounds are removed */
 .info-grid .info-row .info-value,
 .info-column .info-row .info-value,
@@ -2150,23 +2245,23 @@
     border-bottom: none !important;
 } 
 
-/* TF Filters Styling - Minimalistic Elegant Design */
+/* TF Filters Styling - Compact and Elegant Design */
 .tf-filters {
-    background: #ffffff;
-    padding: 1.5rem;
+    background: #f8f9fa; /* Lighter grey background */
+    padding: 0.75rem 1.5rem; /* Reduced vertical padding for compact height */
     border-radius: 8px;
     margin-bottom: 1.5rem;
     border: 1px solid #e9ecef;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .filter-controls {
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.2rem; /* Reduced gap to bring filters closer */
-    flex-wrap: nowrap;
+    align-items: center; /* Perfect vertical alignment */
+    justify-content: center; /* Center everything in the middle */
+    gap: 1.2rem; /* Comfortable spacing between elements */
+    flex-wrap: nowrap; /* Keep everything in one line */
     margin: 0;
     width: 100%;
     padding: 0;
@@ -2395,11 +2490,14 @@
 .filter-actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    justify-content: center;
+    gap: 0.5rem; /* Compact spacing between buttons */
+    justify-content: flex-end; /* Align buttons to the right */
     flex-shrink: 0;
-    margin: 0 auto;
-    padding: 0.5rem 0;
+    margin: 0;
+    padding: 0; /* Remove vertical padding for compactness */
+    margin-top: 1.25rem; /* Move buttons slightly more down */
+    position: relative; /* Enable positioning */
+    right: -1rem; /* Move ONLY the buttons to the right */
 }
 
 .filter-btn {
@@ -2650,6 +2748,12 @@
 
 /* Individual hover behavior for copyable items - CSS-only solution */
 .copyable-item:hover {
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Match the Main TSS blue color */
+}
+
+/* Ensure info-value elements with copyable-item class get proper hover effect */
+.info-value.copyable-item:hover {
     background-color: transparent !important;
     color: #5fa8d3 !important; /* Match the Main TSS blue color */
 }

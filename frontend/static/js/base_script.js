@@ -272,7 +272,7 @@ function copyToClipboard(text) {
     if (navigator.clipboard && window.isSecureContext) {
         // Use the modern clipboard API
         return navigator.clipboard.writeText(text).then(() => {
-            showNotification('Copied to clipboard!', 'success');
+            // Notification removed - silent copy
         }).catch(() => {
             fallbackCopyToClipboard(text);
         });
@@ -294,9 +294,9 @@ function fallbackCopyToClipboard(text) {
     
     try {
         document.execCommand('copy');
-        showNotification('Copied to clipboard!', 'success');
+        // Notification removed - silent copy
     } catch (err) {
-        showNotification('Failed to copy to clipboard', 'error');
+        // Silent failure - no notification
     }
     
     document.body.removeChild(textArea);

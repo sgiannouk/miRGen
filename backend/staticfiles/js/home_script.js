@@ -520,9 +520,8 @@ function updateField(fieldId, value) {
     const element = document.getElementById(fieldId);
     if (element) {
         if (fieldId === 'sequence') {
-            // Special handling for sequence with 5' and 3' indicators and length
-            const sequenceLength = value.length;
-            element.innerHTML = `<span class="sequence-wrapper"><span class="sequence-5p">5' - </span><span class="sequence-text">${value}</span><span class="sequence-3p"> - 3' (${sequenceLength} nt)</span></span>`;
+            // Special handling for sequence with 5' and 3' indicators (length removed from display)
+            element.innerHTML = `<span class="sequence-wrapper"><span class="sequence-5p">5' - </span><span class="sequence-text">${value}</span><span class="sequence-3p"> - 3'</span></span>`;
         } else {
             element.textContent = value;
         }
@@ -1372,40 +1371,43 @@ function initializeClickToCopy() {
         });
     });
     
-    // Handle sequence text (copy only the sequence)
+    // Handle sequence text (copy only the sequence) - DISABLED for Pre-miRNA Sequence to avoid conflicts
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('sequence-text')) {
+            // Skip Pre-miRNA Sequence - handled by dedicated handler to avoid double highlighting
+            if (e.target.classList.contains('pre-mirna-sequence')) {
+                return; // Let the dedicated handler take care of this
+            }
+            
             console.log('Sequence text clicked:', e.target);
             const textToCopy = e.target.textContent.trim();
             console.log('Text to copy:', textToCopy);
             console.log('Has pre-mirna-sequence class:', e.target.classList.contains('pre-mirna-sequence'));
             
-            // Always show length for Pre-miRNA Sequence (has pre-mirna-sequence class)
-            if (e.target.classList.contains('pre-mirna-sequence')) {
-                const sequenceLength = textToCopy.length;
-                console.log('Pre-miRNA sequence length:', sequenceLength);
-                
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        console.log('Sequence copied successfully, showing length tooltip');
-                        // Show copy feedback on the entire sequence wrapper (including 5' and 3' labels)
-                        const sequenceWrapper = e.target.closest('.sequence-wrapper');
-                        if (sequenceWrapper) {
-                            showCopySuccessWithLength(sequenceWrapper, sequenceLength + ' nt');
-                        } else {
-                            showCopySuccessWithLength(e.target, sequenceLength + ' nt');
-                        }
-                    }).catch((error) => {
-                        console.error('Clipboard write failed:', error);
-                        fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
-                    });
-                } else {
-                    console.log('Clipboard API not available, using fallback');
-                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
-                }
+            // Handle other sequence text (like mature sequences), don't show length
+            console.log('Not a pre-miRNA sequence, copying without length');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopySuccess(e.target);
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(textToCopy, e.target);
+                });
             } else {
-                console.log('Not a pre-miRNA sequence, copying without length');
-                // For other sequence text (like mature sequences), don't show length
+                fallbackCopyTextToClipboard(textToCopy, e.target);
+            }
+        }
+        
+        // Handle 5' and 3' labels - make them clickable to copy the sequence
+        if (e.target.classList.contains('sequence-5p') || e.target.classList.contains('sequence-3p')) {
+            const sequenceText = e.target.closest('.sequence-wrapper').querySelector('.sequence-text');
+            // Skip Pre-miRNA Sequence - handled by dedicated handler to avoid double highlighting
+            if (sequenceText && sequenceText.classList.contains('pre-mirna-sequence')) {
+                return; // Let the dedicated handler take care of this
+            }
+            
+            // Handle other sequence labels (if any)
+            if (sequenceText) {
+                const textToCopy = sequenceText.textContent.trim();
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         showCopySuccess(e.target);
@@ -1414,29 +1416,6 @@ function initializeClickToCopy() {
                     });
                 } else {
                     fallbackCopyTextToClipboard(textToCopy, e.target);
-                }
-            }
-        }
-        
-        // Handle 5' and 3' labels - make them clickable to copy the sequence
-        if (e.target.classList.contains('sequence-5p') || e.target.classList.contains('sequence-3p')) {
-            const sequenceText = e.target.closest('.sequence-wrapper').querySelector('.sequence-text');
-            if (sequenceText && sequenceText.classList.contains('pre-mirna-sequence')) {
-                const textToCopy = sequenceText.textContent.trim();
-                const sequenceLength = textToCopy.length;
-                
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        // Show copy feedback on the entire sequence wrapper
-                        const sequenceWrapper = e.target.closest('.sequence-wrapper');
-                        if (sequenceWrapper) {
-                            showCopySuccessWithLength(sequenceWrapper, sequenceLength + ' nt');
-                        }
-                    }).catch(() => {
-                        fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
-                    });
-                } else {
-                    fallbackCopyTextToClipboardWithLength(textToCopy, e.target, sequenceLength + ' nt');
                 }
             }
             return;
@@ -2348,6 +2327,59 @@ document.addEventListener('DOMContentLoaded', function() {
             element.style.cursor = 'pointer';
         }
     });
+    
+    // Special handling for Pre-miRNA Sequence to show length when copying
+    const sequenceElement = document.getElementById('sequence');
+    if (sequenceElement) {
+        sequenceElement.addEventListener('click', function() {
+            // Get the sequence text without 5' and 3' labels
+            const sequenceText = this.querySelector('.sequence-text');
+            if (sequenceText) {
+                const textToCopy = sequenceText.textContent.trim();
+                const sequenceLength = textToCopy.length;
+                
+                // Copy to clipboard
+                copyToClipboard(textToCopy);
+                
+                // Show copy feedback with length
+                this.classList.add('copied');
+                
+                // Create and show length tooltip in green
+                const tooltip = document.createElement('div');
+                tooltip.className = 'copy-length-tooltip';
+                tooltip.textContent = `${sequenceLength} nt`;
+                tooltip.style.cssText = `
+                    position: absolute;
+                    background: #28a745;
+                    color: white;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    z-index: 1000;
+                    pointer-events: none;
+                    white-space: nowrap;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                `;
+                
+                // Position tooltip above the sequence
+                const rect = this.getBoundingClientRect();
+                tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                tooltip.style.top = (rect.top - 40) + 'px';
+                
+                document.body.appendChild(tooltip);
+                
+                // Remove tooltip and copied class after 2 seconds
+                setTimeout(() => {
+                    this.classList.remove('copied');
+                    if (tooltip.parentNode) {
+                        tooltip.parentNode.removeChild(tooltip);
+                    }
+                }, 2000);
+            }
+        });
+        sequenceElement.style.cursor = 'pointer';
+    }
 });
 
 
