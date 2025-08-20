@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">
+                        <i class="fas fa-dna"></i>
+                        Test miRNA Detail (hsa-let-7a-1)
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Basic miRNA Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Basic Information</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Name:</strong></td>
+                                    <td>hsa-let-7a-1</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Species:</strong></td>
+                                    <td>Human</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Chromosome:</strong></td>
+                                    <td>chr9</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Strand:</strong></td>
+                                    <td>+</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Position:</strong></td>
+                                    <td>94,175,957 - 94,176,036</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Genome Browser Data</h5>
+                            <div id="debug-info" class="bg-light p-3 rounded">
+                                <p><strong>Genome:</strong> hg38</p>
+                                <p><strong>Chromosome:</strong> chr9</p>
+                                <p><strong>TSS:</strong> 94,166,274</p>
+                                <p><strong>Pre-miRNA:</strong> 94,175,957-94,176,036</p>
+                                <p><strong>Mature:</strong> 94,175,962-94,175,983</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Genome Browser -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Genome Browser View</h5>
+                            <div id="igv-container" 
+                                 style="height: 420px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.08); border: 1px solid #e9ecef;">
+                                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                    <div class="text-center">
+                                        <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                                        <p>Loading genome browser...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- igv.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/igv@2.17.0/dist/igv.min.js"></script>
+<!-- our wrapper -->
+<script type="module">
+    import { initMiRNABrowser } from "{% static 'js/igv_mirna.js' %}";
+
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            // Test configuration with mock data for hsa-let-7a-1
+            const cfg = {
+                containerId: "igv-container",
+                genome: "hg38",
+                chr: "chr9",
+                tss: 94166274,
+                alt_tss: [],
+                bigBedUrl: "{% static 'annotations/gencode.v48.hg38.bigBed' %}",
+                host: null,
+                pre: {
+                    name: "hsa-let-7a-1",
+                    strand: "+",
+                    start: 94175957,
+                    end: 94176036
+                },
+                matures: [
+                    {
+                        name: "hsa-let-7a-5p",
+                        strand: "+",
+                        start: 94175962,
+                        end: 94175983
+                    }
+                ],
+                padding: 5000
+            };
+
+            console.log('Test IGV Configuration:', cfg);
+            console.log('Initializing IGV browser with test data...');
+            
+            await initMiRNABrowser(cfg);
+            console.log('IGV browser initialized successfully!');
+            
+        } catch (error) {
+            console.error('Failed to initialize genome browser:', error);
+            document.getElementById('igv-container').innerHTML = `
+                <div class="d-flex align-items-center justify-content-center h-100 text-danger">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <p>Failed to load genome browser</p>
+                        <small class="text-muted">${error.message}</small>
+                    </div>
+                </div>
+            `;
+        }
+    });
+</script>
+{% endblock %}

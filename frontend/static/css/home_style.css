@@ -514,9 +514,16 @@
 }
 
 /* miRNA name color in Basic Information */
-.result-title #mirnaDisplayName {
-    color: #00809D;
+.result-title #mirnaDisplayName,
+.result-title #mirnaDisplayName.copyable-item {
+    color: #7272AB !important;
     font-weight: 700;
+    transition: color 0.2s ease;
+}
+
+.result-title #mirnaDisplayName:hover,
+.result-title #mirnaDisplayName.copyable-item:hover {
+    color: #5fa8d3 !important;
 }
 
 .result-content {
@@ -599,9 +606,16 @@
     padding-top: 0;
 }
 
-.info-value:hover {
+/* Remove the general hover rule that affects all items in a row */
+/* .info-value:hover {
     background-color: transparent !important;
-    color: #5fa8d3 !important; /* Match the Main TSS blue color */
+    color: #5fa8d3 !important;
+} */
+
+/* Individual hover behavior for copyable items in multi-entry fields */
+.info-value .copyable-item:hover {
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Blue color on hover */
 }
 
 .info-value:active {
@@ -1020,9 +1034,7 @@
 }
 
 /* Ensure copyable items in right column have no background and maintain pointer cursor */
-.info-column:last-child .copyable-item,
-.info-column:last-child .copyable-item:hover,
-.info-column:last-child .copyable-item:active {
+.info-column:last-child .copyable-item {
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
@@ -1068,38 +1080,29 @@
     font-size: 0.9rem;
 }
 
-.copyable-item:hover {
+/* Remove the general hover rule to allow individual hover behavior */
+/* .copyable-item:hover {
     background-color: transparent !important;
-    color: #5fa8d3 !important; /* Match the Main TSS blue color */
-}
+    color: #5fa8d3 !important;
+} */
 
 /* Special styling for miRNA name - blue copy feedback like other items */
 #mirnaDisplayName.copyable-item {
+    color: #7272AB; /* Default color as requested */
     cursor: pointer;
     transition: all 0.2s ease;
+    text-decoration: none;
 }
 
 #mirnaDisplayName.copyable-item:hover {
     background-color: transparent !important;
-    color: #5fa8d3 !important; /* Blue color on hover like other copyable items */
-    text-decoration: none !important;
+    color: #5fa8d3 !important; /* Blue color on hover to indicate copyable */
+    text-decoration: none !important; /* No underline on hover */
 }
 
-#mirnaDisplayName.copyable-item.copied {
-    background-color: #e3f2fd !important; /* Light blue background like other items */
-    color: #1976d2 !important; /* Darker blue text like other items */
-    border: 1px solid #5fa8d3 !important; /* Blue border like other items */
-}
-
-#mirnaDisplayName.copyable-item.copied::after {
-    content: '✓' !important; /* Show checkmark like other items */
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #1976d2;
-    font-weight: bold;
-    font-size: 0.875rem;
+/* Ensure copyable items in right column have a default non-blue color */
+.info-column:last-child .copyable-item {
+    color: #343a40;
 }
 
 .copyable-item.copied {
@@ -2137,40 +2140,45 @@
 
 /* TF Filters Styling - Minimalistic Elegant Design */
 .tf-filters {
-    background: #ffffff;
-    padding: 1.5rem;
+    background: #f8f9fa; /* Lighter grey background */
+    padding: 1rem 1.5rem; /* Reduced vertical padding */
     border-radius: 8px;
     margin-bottom: 1.5rem;
     border: 1px solid #e9ecef;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .filter-controls {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    align-items: center; /* Vertically center align items */
+    justify-content: center; /* Horizontally center align items */
+    gap: 1rem; /* Closer gap */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    margin: 0 auto;
+    width: 100%;
+    padding: 0;
 }
 
 .filter-group {
     display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
     flex-shrink: 0;
+    min-width: 140px; /* Slightly reduced */
+    max-width: 170px; /* Slightly reduced */
 }
 
 .filter-group label {
-    font-weight: 500;
-    color: #495057;
-    font-size: 0.8rem;
-    text-transform: none;
-    letter-spacing: 0.2px;
-    min-width: 80px;
-    text-align: right;
+    font-weight: 400;
+    color: #6c757d;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     white-space: nowrap;
+    min-width: auto;
+    text-align: left;
 }
 
 .filter-group select {
@@ -2199,21 +2207,24 @@
     position: relative;
     display: inline-block;
     z-index: 1001;
+    height: 22px;
 }
 
 .multiselect-toggle {
     background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 0.4rem 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    padding: 0.2rem 0.5rem;
     font-size: 0.8rem;
     color: #495057;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-width: 140px;
+    min-width: 120px;
     transition: all 0.2s ease;
+    height: 22px;
+    box-sizing: border-box;
 }
 
 .multiselect-toggle:hover {
@@ -2225,6 +2236,78 @@
     outline: none;
     border-color: #FFB238;
     box-shadow: 0 0 0 2px rgba(255, 178, 56, 0.1);
+}
+
+/* TF Name Search Styling */
+.tf-search-container {
+    position: relative;
+    display: inline-block;
+    min-width: 160px;
+    max-width: 200px;
+    height: 22px;
+}
+
+.tf-search-input {
+    width: 100%;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    background: white;
+    transition: all 0.2s ease;
+    color: #495057;
+    height: 22px;
+    box-sizing: border-box;
+}
+
+.tf-search-input:focus {
+    outline: none;
+    border-color: #FFB238;
+    box-shadow: 0 0 0 2px rgba(255, 178, 56, 0.1);
+}
+
+.tf-search-input:hover {
+    border-color: #FFB238;
+}
+
+.tf-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1002;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tf-autocomplete.show {
+    display: block;
+}
+
+.tf-autocomplete-item {
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.tf-autocomplete-item:hover {
+    background-color: #f8f9fa;
+}
+
+.tf-autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.tf-autocomplete-item.highlighted {
+    background-color: #FFB238;
+    color: white;
 }
 
 .dropdown-arrow {
@@ -2291,13 +2374,17 @@
 .score-range {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background: #f8f9fa;
-    padding: 0.4rem 0.6rem;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+    gap: 0.3rem; /* Reduced gap */
+    background: #f1f3f4;
+    padding: 0.2rem 0.5rem; /* Slightly reduced padding */
+    border-radius: 3px;
+    border: 1px solid #e1e5e9;
     transition: all 0.2s ease;
     flex-shrink: 0;
+    min-width: 220px; /* Reduced from 240px */
+    max-width: 240px; /* Reduced from 260px */
+    height: 22px;
+    box-sizing: border-box;
 }
 
 .score-range:hover {
@@ -2306,7 +2393,7 @@
 }
 
 .score-range input[type="range"] {
-    width: 80px;
+    width: 70px; /* Reduced from 80px */
     height: 4px;
     border-radius: 2px;
     background: #dee2e6;
@@ -2323,8 +2410,8 @@
 .score-range input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 12px; /* Slightly smaller */
+    height: 12px; /* Slightly smaller */
     border-radius: 50%;
     background: #FFB238;
     cursor: pointer;
@@ -2338,8 +2425,8 @@
 }
 
 .score-range input[type="range"]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
+    width: 12px; /* Slightly smaller */
+    height: 12px; /* Slightly smaller */
     border-radius: 50%;
     background: #FFB238;
     cursor: pointer;
@@ -2353,9 +2440,9 @@
 }
 
 .score-range span {
-    font-size: 0.8rem;
+    font-size: 0.75rem; /* Slightly smaller */
     color: #6c757d;
-    min-width: 20px;
+    min-width: 18px; /* Reduced */
     text-align: center;
     font-weight: 500;
 }
@@ -2363,7 +2450,7 @@
 .score-range span:not(:nth-child(2)):not(:nth-child(4)) {
     color: #495057;
     font-weight: 500;
-    font-size: 0.75rem;
+    font-size: 0.7rem; /* Slightly smaller */
     text-transform: none;
     letter-spacing: 0.2px;
 }
@@ -2374,22 +2461,24 @@
     gap: 0.6rem;
     justify-content: center;
     flex-shrink: 0;
+    margin: 0 auto;
+    padding: 0.5rem 0;
 }
 
 .filter-btn {
     background: #FFB238;
     color: white;
     border: none;
-    padding: 0.4rem 1rem;
-    border-radius: 6px;
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 500;
     transition: all 0.2s ease;
     letter-spacing: 0.3px;
     text-transform: uppercase;
-    min-width: 80px;
-    height: 32px;
+    min-width: 70px;
+    height: 22px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -2425,16 +2514,78 @@
 }
 
 .download-container .btn {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.3px;
-    padding: 0.4rem 0.8rem;
-    height: 32px;
+    padding: 0.2rem 0.6rem;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: none;
     transition: all 0.2s ease;
+}
+
+/* Bootstrap 5.3 Split Button Styling */
+.download-container .btn-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.download-container .btn-group .btn:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.download-container .btn-group .dropdown-toggle-split {
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.download-container .dropdown-menu {
+    margin-top: 0.125rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+    background: white;
+    min-width: 120px;
+    z-index: 1000;
+}
+
+.download-container .dropdown-menu.show {
+    display: block;
+}
+
+.download-container .dropdown-item {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    color: #212529;
+    text-decoration: none;
+    display: block;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.download-container .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #16181b;
+}
+
+.download-container .dropdown-item:active {
+    background-color: #e9ecef;
+    color: #16181b;
+}
+
+/* Ensure proper spacing for filter controls */
+.filter-controls {
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    margin: 0 0 1rem 0;
+    border: none;
 }
 
 .download-container .btn-danger {
@@ -2600,3 +2751,63 @@
         justify-content: center;
     }
 } 
+
+/* Individual hover behavior for copyable items */
+.copyable-item.hover-active,
+.info-column .copyable-item.hover-active,
+.info-row .copyable-item.hover-active {
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Match the Main TSS blue color */
+}
+
+.copyable-item:not(.hover-active),
+.info-column .copyable-item:not(.hover-active),
+.info-row .copyable-item:not(.hover-active) {
+    color: inherit !important;
+    background-color: transparent !important;
+}
+
+/* Ensure copyable items have proper cursor and transitions */
+.copyable-item {
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Individual hover behavior for copyable items - CSS-only solution */
+.copyable-item:hover {
+    background-color: transparent !important;
+    color: #5fa8d3 !important; /* Match the Main TSS blue color */
+}
+
+/* Ensure copyable items have proper default styling */
+.info-value .copyable-item {
+    color: #495057; /* Default dark grey color */
+    transition: color 0.2s ease;
+}
+
+/* Remove any hover effects from the container level */
+.info-value:hover .copyable-item:not(:hover) {
+    color: #495057 !important; /* Keep default color for non-hovered items */
+}
+
+/* Copied state for miRNA name */
+.result-title #mirnaDisplayName.copied,
+.result-title #mirnaDisplayName.copyable-item.copied {
+    background-color: #e3f2fd !important;
+    color: #1976d2 !important;
+    border: 1px solid #5fa8d3 !important;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.result-title #mirnaDisplayName.copied::after,
+.result-title #mirnaDisplayName.copyable-item.copied::after {
+    content: '✓';
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1976d2;
+    font-weight: bold;
+    font-size: 0.875rem;
+}

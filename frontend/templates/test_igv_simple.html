@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple IGV.js Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 8px;
+        }
+        .test-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .test-btn.success {
+            background: #28a745;
+        }
+        .test-btn.error {
+            background: #dc3545;
+        }
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        .log-info { color: #007bff; }
+        .log-success { color: #28a745; }
+        .log-error { color: #dc3545; }
+        .log-warning { color: #ffc107; }
+        
+        #igv-container {
+            height: 420px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.08);
+            border: 1px solid #e9ecef;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-dna"></i> Simple IGV.js Test</h1>
+            <p>Testing basic IGV.js functionality with mock miRNA data</p>
+        </div>
+        
+        <div class="test-controls">
+            <h3>Test Controls</h3>
+            <button class="test-btn" onclick="testIGVBasic()">
+                <i class="fas fa-play"></i> Test Basic IGV
+            </button>
+            <button class="test-btn" onclick="testIGVWithMockData()">
+                <i class="fas fa-database"></i> Test with Mock miRNA Data
+            </button>
+            <button class="test-btn" onclick="clearLog()">
+                <i class="fas fa-trash"></i> Clear Log
+            </button>
+            <button class="test-btn" onclick="checkDependencies()">
+                <i class="fas fa-check-circle"></i> Check Dependencies
+            </button>
+        </div>
+        
+        <div id="igv-container">
+            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                    <p>IGV.js container ready</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log-container" id="logContainer">
+            <div class="log-entry log-info">Ready to test. Click a test button above.</div>
+        </div>
+    </div>
+
+    <!-- Load IGV.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/igv@2.15.7/dist/igv.min.js"></script>
+    
+    <script>
+        let igvBrowser = null;
+        let testLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push({ message: logEntry, type });
+            
+            const logContainer = document.getElementById('logContainer');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-entry log-${type}`;
+            logDiv.textContent = logEntry;
+            logContainer.appendChild(logDiv);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '';
+            testLog = [];
+            log('Log cleared', 'info');
+        }
+        
+        function checkDependencies() {
+            log('Checking dependencies...', 'info');
+            
+            if (typeof igv !== 'undefined') {
+                log('✓ igv.js loaded successfully', 'success');
+                log(`IGV version: ${igv.version || 'Unknown'}`, 'info');
+            } else {
+                log('✗ igv.js not loaded', 'error');
+            }
+            
+            const container = document.getElementById('igv-container');
+            if (container) {
+                log('✓ IGV container found', 'success');
+                log(`Container type: ${container.tagName}, ID: ${container.id}`, 'info');
+            } else {
+                log('✗ IGV container not found', 'error');
+            }
+            
+            log('Dependency check completed', 'info');
+        }
+        
+        function testIGVBasic() {
+            log('Testing basic IGV.js functionality...', 'info');
+            
+            try {
+                if (typeof igv === 'undefined') {
+                    throw new Error('igv.js not loaded');
+                }
+                
+                const container = document.getElementById('igv-container');
+                if (!container) {
+                    throw new Error('IGV container not found');
+                }
+                
+                // Clear the container
+                container.innerHTML = '';
+                
+                log('Creating basic IGV browser...', 'info');
+                
+                const options = {
+                    genome: 'hg38',
+                    locus: 'chr9:94,175,000-94,176,000',
+                    showCursorGuide: true
+                };
+                
+                igv.createBrowser(container, options)
+                    .then(browser => {
+                        igvBrowser = browser;
+                        log('✓ Basic IGV browser created successfully', 'success');
+                    })
+                    .catch(error => {
+                        log(`✗ Failed to create basic browser: ${error.message}`, 'error');
+                        console.error('IGV error details:', error);
+                    });
+                
+            } catch (error) {
+                log(`✗ Basic IGV test failed: ${error.message}`, 'error');
+                console.error('Test error details:', error);
+            }
+        }
+        
+        function testIGVWithMockData() {
+            log('Testing IGV.js with mock miRNA data...', 'info');
+            
+            try {
+                if (typeof igv === 'undefined') {
+                    throw new Error('igv.js not loaded');
+                }
+                
+                const container = document.getElementById('igv-container');
+                if (!container) {
+                    throw new Error('IGV container not found');
+                }
+                
+                // Clear the container
+                container.innerHTML = '';
+                
+                log('Creating IGV browser with mock miRNA data...', 'info');
+                
+                // Mock data for hsa-let-7a-1
+                const mockData = {
+                    genome: 'hg38',
+                    chr: 'chr9',
+                    tss: 94166274,
+                    pre: {
+                        name: 'hsa-let-7a-1',
+                        strand: '+',
+                        start: 94175957,
+                        end: 94176036
+                    },
+                    matures: [
+                        {
+                            name: 'hsa-let-7a-5p',
+                            strand: '+',
+                            start: 94175962,
+                            end: 94175983
+                        },
+                        {
+                            name: 'hsa-let-7a-3p',
+                            strand: '+',
+                            start: 94176013,
+                            end: 94176033
+                        }
+                    ],
+                    padding: 5000
+                };
+                
+                // Calculate locus
+                const coords = [
+                    mockData.pre.start, mockData.pre.end,
+                    ...mockData.matures.flatMap(m => [m.start, m.end]),
+                    mockData.tss
+                ];
+                
+                const locusStart = Math.min(...coords) - mockData.padding;
+                const locusEnd = Math.max(...coords) + mockData.padding;
+                
+                const options = {
+                    genome: mockData.genome,
+                    locus: `${mockData.chr}:${locusStart}-${locusEnd}`,
+                    showCursorGuide: true,
+                    roi: [{
+                        name: 'Main TSS',
+                        chr: mockData.chr,
+                        start: mockData.tss - 1,
+                        end: mockData.tss,
+                        color: 'rgba(239,68,68,0.25)'
+                    }],
+                    tracks: [
+                        {
+                            type: 'annotation',
+                            name: 'pre-miRNA',
+                            color: '#22c55e',
+                            displayMode: 'EXPANDED',
+                            features: [{
+                                chr: mockData.chr,
+                                start: mockData.pre.start - 1,
+                                end: mockData.pre.end,
+                                name: mockData.pre.name,
+                                strand: mockData.pre.strand
+                            }]
+                        },
+                        {
+                            type: 'annotation',
+                            name: 'Mature miRNAs',
+                            color: '#f59e0b',
+                            displayMode: 'EXPANDED',
+                            features: mockData.matures.map(m => ({
+                                chr: mockData.chr,
+                                start: m.start - 1,
+                                end: m.end,
+                                name: m.name,
+                                strand: m.strand
+                            }))
+                        }
+                    ]
+                };
+                
+                igv.createBrowser(container, options)
+                    .then(browser => {
+                        igvBrowser = browser;
+                        log('✓ IGV browser created successfully with mock miRNA data', 'success');
+                    })
+                    .catch(error => {
+                        log(`✗ Failed to create browser with mock data: ${error.message}`, 'error');
+                        console.error('IGV error details:', error);
+                    });
+                
+            } catch (error) {
+                log(`✗ Mock data test failed: ${error.message}`, 'error');
+                console.error('Test error details:', error);
+            }
+        }
+        
+        // Auto-check dependencies on load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, checking dependencies...', 'info');
+            setTimeout(checkDependencies, 1000);
+        });
+    </script>
+</body>
+</html>
+

@@ -512,6 +512,20 @@ function updateBasicInformation(mirnaName, organismVersion) {
     setTimeout(() => {
         updateExternalLinks(mirnaName, organismVersion);
     }, 50);
+    
+    // Set host gene information
+    if (basicInfo.hostGeneCoordinates) {
+        setHostGeneInfo(true, {
+            id: 'ENSG00000269929.7',
+            name: 'MIRLET7A1HG',
+            type: 'lncRNA',
+            coordinates: basicInfo.hostGeneCoordinates
+        });
+    } else {
+        setHostGeneInfo(false);
+    }
+    
+
 }
 
 // Update a single field
@@ -519,8 +533,9 @@ function updateField(fieldId, value) {
     const element = document.getElementById(fieldId);
     if (element) {
         if (fieldId === 'sequence') {
-            // Special handling for sequence with 5' and 3' indicators
-            element.innerHTML = `<span class="sequence-wrapper"><span class="sequence-5p">5' - </span><span class="sequence-text">${value}</span><span class="sequence-3p"> - 3'</span></span>`;
+            // Special handling for sequence with 5' and 3' indicators and length
+            const sequenceLength = value.length;
+            element.innerHTML = `<span class="sequence-wrapper"><span class="sequence-5p">5' - </span><span class="sequence-text">${value}</span><span class="sequence-3p"> - 3' (${sequenceLength} nt)</span></span>`;
         } else {
             element.textContent = value;
         }
@@ -546,16 +561,43 @@ function updateConditionalField(fieldId, value, rowId) {
 function updateMultiLineField(fieldId, values) {
     const element = document.getElementById(fieldId);
     if (element && Array.isArray(values)) {
+        // Update the label to be singular or plural based on count
+        updateFieldLabel(fieldId, values.length);
+        
         let multiLineHtml;
         if (fieldId === 'matureSequences') {
             // Special handling for sequences with 5' and 3' indicators
-            multiLineHtml = values.map(value => `<span class="copyable-item sequence-item">5' - ${value} - 3'</span>`).join('');
+            multiLineHtml = values.map((value, index) => 
+                `<span class="copyable-item sequence-item" data-index="${index}">5' - ${value} - 3'</span>`
+            ).join('');
         } else {
-            multiLineHtml = values.map(value => `<span class="copyable-item">${value}</span>`).join('');
+            multiLineHtml = values.map((value, index) => 
+                `<span class="copyable-item" data-index="${index}">${value}</span>`
+            ).join('');
         }
         element.innerHTML = `<div class="multi-line-value">${multiLineHtml}</div>`;
+        
+
     }
 }
+
+// Update field labels to be singular or plural
+function updateFieldLabel(fieldId, count) {
+    const labelMap = {
+        'matureMirnas': { singular: 'Mature miRNA:', plural: 'Mature miRNAs:' },
+        'matureAccessions': { singular: 'Mature Accession:', plural: 'Mature Accessions:' },
+        'matureCoordinates': { singular: 'Mature Coordinates:', plural: 'Mature Coordinates:' }
+    };
+    
+    if (labelMap[fieldId]) {
+        const labelElement = document.querySelector(`#${fieldId}`).closest('.info-row').querySelector('.info-label');
+        if (labelElement) {
+            labelElement.textContent = count === 1 ? labelMap[fieldId].singular : labelMap[fieldId].plural;
+        }
+    }
+}
+
+
 
 // Get Basic Information Data (mock function - replace with actual API call)
 function getBasicInfoData(mirnaName, organismVersion) {
@@ -582,7 +624,10 @@ function getBasicInfoData(mirnaName, organismVersion) {
             matureMirnas: ['hsa-let-7a-5p', 'hsa-let-7a-3p'],
             matureAccessions: ['MIMAT0000062_2', 'MIMAT0004481_1'],
             matureCoordinates: ['chr9:94,175,962-94,175,983(+)', 'chr9:94,176,013-94,176,033(+)'],
-            matureSequences: ['UGAGGUAGUAGGUUGUAUAGUU', 'CUAUACAAUCUACUGUCUUUC']
+            matureSequences: ['UGAGGUAGUAGGUUGUAUAGUU', 'CUAUACAAUCUACUGUCUUUC'],
+            mainTss: 'chr9:94,166,274(+)',
+            alternativeTss: ['chr9:94,166,284(+)', 'chr9:94,166,278(+)'],
+            hostGeneCoordinates: 'chr9:94,166,274-94,200,905(+)'
         },
         'hsa-miR-99b': {
             fullName: 'Homo sapiens (human) hsa-miR-99b',
@@ -872,61 +917,8 @@ function toggleCollapsible(content, toggle, card) {
 
 // Show Example Results
 function showExampleResults() {
-    const searchResults = document.getElementById('searchResults');
-    if (!searchResults) return;
-    
-    const exampleData = {
-        mirna_name: 'hsa-let-7a-1',
-        organism: 'Human',
-        genome_version: 'GRCh38/hg38',
-        tss_count: 3,
-        chromosome: 'chr9',
-        strand: '+',
-        coordinates: '94,166,274',
-        expression_level: 'High',
-        confidence_score: 0.95
-    };
-    
-    const resultsHtml = `
-        <div class="result-card">
-            <div class="result-header">
-                <div>
-                    <div class="result-title">${exampleData.mirna_name}</div>
-                    <div class="result-subtitle">${exampleData.organism} (${exampleData.genome_version})</div>
-                </div>
-                <div class="result-badge">Example Result</div>
-            </div>
-            <div class="result-details">
-                <div class="detail-item">
-                    <span class="detail-label">TSS Count</span>
-                    <span class="detail-value">${exampleData.tss_count}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Chromosome</span>
-                    <span class="detail-value">${exampleData.chromosome}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Strand</span>
-                    <span class="detail-value">${exampleData.strand}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Coordinates</span>
-                    <span class="detail-value">${exampleData.coordinates}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Expression Level</span>
-                    <span class="detail-value">${exampleData.expression_level}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Confidence Score</span>
-                    <span class="detail-value">${exampleData.confidence_score}</span>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    searchResults.innerHTML = resultsHtml;
-    searchResults.style.display = 'block';
+    // Use the existing showSearchResults function with hsa-let-7a-1 data
+    showSearchResults('hsa-let-7a-1', 'human_GRCh38');
 }
 
 // Organism Selection Functionality
@@ -1656,6 +1648,9 @@ function setHostGeneInfo(hasHostGene, hostGeneData = null) {
         if (hostGeneData.type) {
             document.querySelector('#hostGeneInfoContent .info-item:nth-child(3) .info-value').textContent = hostGeneData.type;
         }
+        if (hostGeneData.coordinates) {
+            document.querySelector('#hostGeneInfoContent .info-item:nth-child(4) .info-value').textContent = hostGeneData.coordinates;
+        }
     } else if (!hasHostGene && hostGeneInfoContent && noHostGeneContent) {
         // Show "no host gene" message
         hostGeneInfoContent.style.display = 'none';
@@ -1964,33 +1959,28 @@ class TFFilterManager {
             }
         });
         
-        // Handle checkbox changes
+        // Handle checkbox changes - auto-apply
         document.querySelectorAll('.multiselect-item input[type="checkbox"]').forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 this.updateTfTypeSelection();
+                this.applyFilters(); // Auto-apply when checkbox changes
             });
         });
         
         // Initialize the TF Type selection display
         this.updateTfTypeSelection();
         
-        // Score range filters
+        // Score range filters - auto-apply
         document.getElementById('scoreMin').addEventListener('input', (e) => {
             this.filters.scoreMin = parseFloat(e.target.value);
             document.getElementById('scoreMinValue').textContent = e.target.value;
-            this.debounceFilterUpdate();
+            this.applyFilters(); // Auto-apply when score changes
         });
         
         document.getElementById('scoreMax').addEventListener('input', (e) => {
             this.filters.scoreMax = parseFloat(e.target.value);
             document.getElementById('scoreMaxValue').textContent = e.target.value;
-            this.debounceFilterUpdate();
-        });
-        
-        // Apply filters button
-        document.getElementById('applyFilters').addEventListener('click', () => {
-            this.currentPage = 1;
-            this.loadResults();
+            this.applyFilters(); // Auto-apply when score changes
         });
         
         // Reset filters button
@@ -2034,7 +2024,8 @@ class TFFilterManager {
             selectedText.textContent = `${selectedOptions.length} Types Selected`;
         }
         
-        this.debounceFilterUpdate();
+        // Auto-apply filters instead of debouncing
+        this.applyFilters();
     }
     
     initializeDownloadFunctionality() {
@@ -2049,6 +2040,7 @@ class TFFilterManager {
         // Click on Download button downloads TSV directly
         downloadBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            console.log('Download button clicked - downloading TSV');
             this.downloadData('tsv');
         });
         
@@ -2059,46 +2051,137 @@ class TFFilterManager {
                 const format = e.currentTarget.dataset.format;
                 console.log('Download format selected:', format);
                 this.downloadData(format);
+                
+                // Close dropdown after selection
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.setAttribute('aria-expanded', 'false');
             });
         });
         
-        // Manual dropdown toggle since Bootstrap might not be working
-        if (dropdownToggle && dropdownMenu) {
-            dropdownToggle.addEventListener('click', (e) => {
+        // Initialize miRNA download functionality (new)
+        const mirnaDownloadBtn = document.getElementById('mirnaDownloadBtn');
+        if (mirnaDownloadBtn) {
+            mirnaDownloadBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
-                
-                // Toggle dropdown manually
-                const isOpen = dropdownMenu.classList.contains('show');
-                if (isOpen) {
-                    dropdownMenu.classList.remove('show');
-                    dropdownToggle.setAttribute('aria-expanded', 'false');
-                } else {
-                    dropdownMenu.classList.add('show');
-                    dropdownToggle.setAttribute('aria-expanded', 'true');
-                }
-                
-                console.log('Manual dropdown toggle:', isOpen ? 'closed' : 'opened');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.classList.remove('show');
-                    dropdownToggle.setAttribute('aria-expanded', 'false');
-                }
+                this.downloadData('tsv');
             });
         }
+        
+        // Initialize dropdown functionality for all dropdowns
+        this.initializeDropdowns();
+        
+        // Initialize TF name search functionality
+        this.initializeTFNameSearch();
+    }
+    
+    initializeDropdowns() {
+        // Find all dropdown toggles and menus
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle-split');
+        const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+        
+        console.log('Found dropdown toggles:', dropdownToggles.length);
+        console.log('Found dropdown menus:', dropdownMenus.length);
+        
+        dropdownToggles.forEach((toggle, index) => {
+            const menu = dropdownMenus[index];
+            console.log(`Initializing dropdown ${index}:`, { toggle: !!toggle, menu: !!menu });
+            
+            if (toggle && menu) {
+                // Remove any existing event listeners
+                const newToggle = toggle.cloneNode(true);
+                toggle.parentNode.replaceChild(newToggle, toggle);
+                
+                // Manual dropdown toggle since Bootstrap might not be working
+                newToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Dropdown toggle clicked');
+                    
+                    // Close all other dropdowns first
+                    dropdownMenus.forEach((otherMenu, otherIndex) => {
+                        if (otherIndex !== index) {
+                            otherMenu.classList.remove('show');
+                            dropdownToggles[otherIndex].setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                    
+                    // Toggle current dropdown
+                    const isOpen = menu.classList.contains('show');
+                    if (isOpen) {
+                        menu.classList.remove('show');
+                        newToggle.setAttribute('aria-expanded', 'false');
+                    } else {
+                        menu.classList.add('show');
+                        newToggle.setAttribute('aria-expanded', 'true');
+                    }
+                    
+                    console.log('Manual dropdown toggle:', isOpen ? 'closed' : 'opened');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!newToggle.contains(e.target) && !menu.contains(e.target)) {
+                        menu.classList.remove('show');
+                        newToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        });
     }
     
     downloadData(format = 'tsv') {
-        if (this.filteredData.length === 0) {
-            alert('No data to download');
+        // Check if we're on a search results page (miRNA data) or TF results page
+        const searchResults = document.getElementById('searchResults');
+        const tfResults = document.getElementById('tfResults');
+        
+        if (searchResults && searchResults.style.display !== 'none') {
+            // We're on miRNA search results page - download miRNA data
+            this.downloadMiRNAData(format);
+        } else if (tfResults && tfResults.style.display !== 'none') {
+            // We're on TF results page - download TF data
+                    if (this.filteredData.length === 0) {
+            console.log('No TF data to download');
             return;
         }
-        
+            this.downloadTFData(format);
+        } else {
+            console.log('No data to download');
+            return;
+        }
+    }
+    
+    downloadMiRNAData(format = 'tsv') {
         let content = '';
-        // Get miRNA name from the page or use default
+        const mirnaName = document.getElementById('mirnaDisplayName')?.textContent || 'miRNA';
+        let filename = `${mirnaName}_data`;
+        
+        // Get the current miRNA data from the page
+        const basicInfo = this.getCurrentMiRNAData();
+        
+        switch (format) {
+            case 'tsv':
+                content = this.convertMiRNAToTSV(basicInfo);
+                filename += '.tsv';
+                break;
+            case 'csv':
+                content = this.convertMiRNAToCSV(basicInfo);
+                filename += '.csv';
+                break;
+            case 'excel':
+                content = this.convertMiRNAToCSV(basicInfo);
+                filename += '.csv';
+                break;
+            default:
+                content = this.convertMiRNAToTSV(basicInfo);
+                filename += '.tsv';
+        }
+        
+        this.downloadFile(content, filename);
+    }
+    
+    downloadTFData(format = 'tsv') {
+        let content = '';
         const mirnaName = document.getElementById('mirnaDisplayName')?.textContent || 'miRNA';
         let filename = `${mirnaName}_TF`;
         
@@ -2112,7 +2195,7 @@ class TFFilterManager {
                 filename += '.csv';
                 break;
             case 'excel':
-                content = this.convertToCSV(); // Excel can read CSV
+                content = this.convertToCSV();
                 filename += '.csv';
                 break;
             default:
@@ -2121,6 +2204,168 @@ class TFFilterManager {
         }
         
         this.downloadFile(content, filename);
+    }
+    
+    getCurrentMiRNAData() {
+        // Extract miRNA data from the current page
+        const data = {};
+        
+        // Basic information
+        data.name = document.getElementById('mirnaDisplayName')?.textContent || '';
+        data.fullName = document.getElementById('fullName')?.textContent || '';
+        data.confidence = document.getElementById('confidence')?.textContent || '';
+        data.mirbaseAccession = document.getElementById('mirbaseAccession')?.textContent || '';
+        data.ensemblId = document.getElementById('ensemblId')?.textContent || '';
+        data.geneName = document.getElementById('geneName')?.textContent || '';
+        data.preMirnaCoordinates = document.getElementById('preMirnaCoordinates')?.textContent || '';
+        data.sequence = document.querySelector('#sequence .sequence-text')?.textContent || '';
+        
+        // Mature miRNAs
+        const matureMirnas = document.querySelectorAll('#matureMirnas .copyable-item');
+        data.matureMirnas = Array.from(matureMirnas).map(item => item.textContent);
+        
+        const matureAccessions = document.querySelectorAll('#matureAccessions .copyable-item');
+        data.matureAccessions = Array.from(matureAccessions).map(item => item.textContent);
+        
+        const matureCoordinates = document.querySelectorAll('#matureCoordinates .copyable-item');
+        data.matureCoordinates = Array.from(matureCoordinates).map(item => item.textContent);
+        
+        const matureSequences = document.querySelectorAll('#matureSequences .sequence-item');
+        data.matureSequences = Array.from(matureSequences).map(item => item.textContent);
+        
+        // TSS data
+        const mainTssRow = document.getElementById('mainTssData');
+        if (mainTssRow) {
+            const cells = mainTssRow.querySelectorAll('.table-cell');
+            data.mainTss = {
+                chromosome: cells[0]?.textContent || '',
+                position: cells[1]?.textContent || '',
+                strand: cells[2]?.textContent || ''
+            };
+        }
+        
+        // Alternative TSS data
+        const altTss1 = document.getElementById('altTss1');
+        const altTss2 = document.getElementById('altTss2');
+        data.alternativeTss = [];
+        
+        if (altTss1) {
+            const cells = altTss1.querySelectorAll('.table-cell');
+            data.alternativeTss.push({
+                chromosome: cells[0]?.textContent.replace('chr9', '').trim() || '',
+                position: cells[1]?.textContent || '',
+                strand: cells[2]?.textContent || '',
+                evidence: cells[3]?.textContent || ''
+            });
+        }
+        
+        if (altTss2) {
+            const cells = altTss2.querySelectorAll('.table-cell');
+            data.alternativeTss.push({
+                chromosome: cells[0]?.textContent.replace('chr9', '').trim() || '',
+                position: cells[1]?.textContent || '',
+                strand: cells[2]?.textContent || '',
+                evidence: cells[3]?.textContent || ''
+            });
+        }
+        
+        return data;
+    }
+    
+    convertMiRNAToTSV(miRNAData) {
+        const rows = [];
+        
+        // Basic Information
+        rows.push(['Field', 'Value'].join('\t'));
+        rows.push(['Name', miRNAData.name].join('\t'));
+        rows.push(['Full Name', miRNAData.fullName].join('\t'));
+        rows.push(['Confidence', miRNAData.confidence].join('\t'));
+        rows.push(['miRBase Accession', miRNAData.mirbaseAccession].join('\t'));
+        rows.push(['Ensembl ID', miRNAData.ensemblId].join('\t'));
+        rows.push(['Gene Name', miRNAData.geneName].join('\t'));
+        rows.push(['Pre-miRNA Coordinates', miRNAData.preMirnaCoordinates].join('\t'));
+        rows.push(['Sequence', miRNAData.sequence].join('\t'));
+        
+        // Mature miRNAs
+        rows.push(['', ''].join('\t'));
+        rows.push(['Mature miRNAs', ''].join('\t'));
+        miRNAData.matureMirnas.forEach((mirna, index) => {
+            rows.push([`  ${mirna}`, ''].join('\t'));
+            rows.push([`    Accession`, miRNAData.matureAccessions[index] || ''].join('\t'));
+            rows.push([`    Coordinates`, miRNAData.matureCoordinates[index] || ''].join('\t'));
+            rows.push([`    Sequence`, miRNAData.matureSequences[index] || ''].join('\t'));
+        });
+        
+        // TSS Information
+        rows.push(['', ''].join('\t'));
+        rows.push(['Main TSS', ''].join('\t'));
+        if (miRNAData.mainTss) {
+            rows.push([`  Chromosome`, miRNAData.mainTss.chromosome].join('\t'));
+            rows.push([`  Position`, miRNAData.mainTss.position].join('\t'));
+            rows.push([`  Strand`, miRNAData.mainTss.strand].join('\t'));
+        }
+        
+        if (miRNAData.alternativeTss && miRNAData.alternativeTss.length > 0) {
+            rows.push(['', ''].join('\t'));
+            rows.push(['Alternative TSSs', ''].join('\t'));
+            miRNAData.alternativeTss.forEach((tss, index) => {
+                rows.push([`  TSS ${index + 1}`, ''].join('\t'));
+                rows.push([`    Chromosome`, tss.chromosome].join('\t'));
+                rows.push([`    Position`, tss.position].join('\t'));
+                rows.push([`    Strand`, tss.strand].join('\t'));
+                rows.push([`    Evidence`, tss.evidence].join('\t'));
+            });
+        }
+        
+        return rows.join('\n');
+    }
+    
+    convertMiRNAToCSV(miRNAData) {
+        const rows = [];
+        
+        // Basic Information
+        rows.push(['Field', 'Value'].join(','));
+        rows.push(['Name', miRNAData.name].join(','));
+        rows.push(['Full Name', miRNAData.fullName].join(','));
+        rows.push(['Confidence', miRNAData.confidence].join(','));
+        rows.push(['miRBase Accession', miRNAData.mirbaseAccession].join(','));
+        rows.push(['Ensembl ID', miRNAData.ensemblId].join(','));
+        rows.push(['Gene Name', miRNAData.geneName].join(','));
+        rows.push(['Pre-miRNA Coordinates', miRNAData.preMirnaCoordinates].join(','));
+        rows.push(['Sequence', miRNAData.sequence].join(','));
+        
+        // Mature miRNAs
+        rows.push(['', ''].join(','));
+        rows.push(['Mature miRNAs', ''].join(','));
+        miRNAData.matureMirnas.forEach((mirna, index) => {
+            rows.push([`  ${mirna}`, ''].join(','));
+            rows.push([`    Accession`, miRNAData.matureAccessions[index] || ''].join(','));
+            rows.push([`    Coordinates`, miRNAData.matureCoordinates[index] || ''].join(','));
+            rows.push([`    Sequence`, miRNAData.matureSequences[index] || ''].join(','));
+        });
+        
+        // TSS Information
+        rows.push(['', ''].join(','));
+        rows.push(['Main TSS', ''].join(','));
+        if (miRNAData.mainTss) {
+            rows.push([`  Chromosome`, miRNAData.mainTss.chromosome].join(','));
+            rows.push([`  Position`, miRNAData.mainTss.position].join(','));
+            rows.push([`  Strand`, miRNAData.mainTss.strand].join(','));
+        }
+        
+        if (miRNAData.alternativeTss && miRNAData.alternativeTss.length > 0) {
+            rows.push(['', ''].join(','));
+            rows.push(['Alternative TSSs', ''].join(','));
+            miRNAData.alternativeTss.forEach((tss, index) => {
+                rows.push([`  TSS ${index + 1}`, ''].join(','));
+                rows.push([`    Chromosome`, tss.chromosome].join(','));
+                rows.push([`    Position`, tss.position].join(','));
+                rows.push([`    Strand`, tss.strand].join(','));
+                rows.push([`    Evidence`, tss.evidence].join(','));
+            });
+        }
+        
+        return rows.join('\n');
     }
     
     convertToTSV() {
@@ -2157,16 +2402,17 @@ class TFFilterManager {
         window.URL.revokeObjectURL(url);
     }
     
-    debounceFilterUpdate() {
-        clearTimeout(this.debounceTimer);
-        this.debounceTimer = setTimeout(() => {
-            this.currentPage = 1; // Reset to first page
-            this.applyFilters();
-        }, 300); // 300ms delay
-    }
+    // Removed debounce since filters now auto-apply
     
     applyFilters() {
         this.filteredData = mockTFData.filter(tf => {
+            // TF Name filter
+            if (this.filters.tfName && this.filters.tfName.trim() !== '') {
+                if (!tf.name.toLowerCase().includes(this.filters.tfName.trim().toLowerCase())) {
+                    return false;
+                }
+            }
+            
             // Type filter - handle multiple selections
             if (this.filters.type && this.filters.type.length > 0) {
                 if (!this.filters.type.includes(tf.type)) {
@@ -2182,6 +2428,8 @@ class TFFilterManager {
             return true;
         });
         
+        // Reset to first page when filters change
+        this.currentPage = 1;
         this.loadResults();
     }
     
@@ -2195,11 +2443,15 @@ class TFFilterManager {
         document.getElementById('scoreMinValue').textContent = '0';
         document.getElementById('scoreMaxValue').textContent = '1';
         
+        // Reset TF name search
+        this.resetTFNameFilter();
+        
         // Reset filter state
         this.filters = {
             type: [],
             scoreMin: 0,
-            scoreMax: 1
+            scoreMax: 1,
+            tfName: ''
         };
         
         // Reset data and pagination
@@ -2266,6 +2518,120 @@ class TFFilterManager {
             Math.min(this.pageSize, this.filteredData.length);
         document.getElementById('totalCount').textContent = this.filteredData.length;
     }
+    
+    initializeTFNameSearch() {
+        const tfNameSearch = document.getElementById('tfNameSearch');
+        const tfAutocomplete = document.getElementById('tfAutocomplete');
+        
+        if (!tfNameSearch || !tfAutocomplete) return;
+        
+        let currentFocus = -1;
+        let filteredTFs = [];
+        
+        // Get unique TF names from the data
+        const getUniqueTFNames = () => {
+            return [...new Set(mockTFData.map(tf => tf.name))];
+        };
+        
+        // Filter TFs based on search input
+        const filterTFs = (searchTerm) => {
+            if (!searchTerm) return [];
+            const uniqueNames = getUniqueTFNames();
+            return uniqueNames.filter(name => 
+                name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        };
+        
+        // Show autocomplete dropdown
+        const showAutocomplete = (results) => {
+            if (results.length === 0) {
+                tfAutocomplete.style.display = 'none';
+                return;
+            }
+            
+            tfAutocomplete.innerHTML = '';
+            results.forEach((name, index) => {
+                const item = document.createElement('div');
+                item.className = 'tf-autocomplete-item';
+                item.textContent = name;
+                item.addEventListener('click', () => {
+                    tfNameSearch.value = name;
+                    tfAutocomplete.style.display = 'none';
+                    this.filterByTFName(name);
+                });
+                tfAutocomplete.appendChild(item);
+            });
+            
+            tfAutocomplete.style.display = 'block';
+            tfAutocomplete.classList.add('show');
+        };
+        
+        // Handle input changes
+        tfNameSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            filteredTFs = filterTFs(searchTerm);
+            showAutocomplete(filteredTFs);
+            currentFocus = -1;
+            
+            // Auto-apply TF name filter
+            this.filterByTFName(searchTerm);
+        });
+        
+        // Handle keyboard navigation
+        tfNameSearch.addEventListener('keydown', (e) => {
+            const items = tfAutocomplete.querySelectorAll('.tf-autocomplete-item');
+            
+            if (e.key === 'ArrowDown') {
+                currentFocus++;
+                if (currentFocus >= items.length) currentFocus = 0;
+                this.highlightAutocompleteItem(items, currentFocus);
+            } else if (e.key === 'ArrowUp') {
+                currentFocus--;
+                if (currentFocus < 0) currentFocus = items.length - 1;
+                this.highlightAutocompleteItem(items, currentFocus);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentFocus > -1 && items[currentFocus]) {
+                    items[currentFocus].click();
+                }
+            } else if (e.key === 'Escape') {
+                tfAutocomplete.style.display = 'none';
+                tfAutocomplete.classList.remove('show');
+                currentFocus = -1;
+            }
+        });
+        
+        // Close autocomplete when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!tfNameSearch.contains(e.target) && !tfAutocomplete.contains(e.target)) {
+                tfAutocomplete.style.display = 'none';
+                tfAutocomplete.classList.remove('show');
+            }
+        });
+    }
+    
+    highlightAutocompleteItem(items, index) {
+        items.forEach((item, i) => {
+            item.classList.toggle('highlighted', i === index);
+        });
+    }
+    
+    filterByTFName(tfName) {
+        // Store the TF name filter in the filters object
+        this.filters.tfName = tfName;
+        
+        // Apply all filters including TF name
+        this.applyFilters();
+    }
+    
+    resetTFNameFilter() {
+        const tfNameSearch = document.getElementById('tfNameSearch');
+        if (tfNameSearch) {
+            tfNameSearch.value = '';
+        }
+        this.filters.tfName = '';
+        this.applyFilters();
+    }
 }
 
 // Initialize Data Service and TF Filter Manager when the page loads
@@ -2276,7 +2642,59 @@ function initializeTFFilters() {
     if (!tfFilterManager) {
         tfFilterManager = new TFFilterManager();
     }
+    
+    // Also initialize the TF name search functionality
+    if (tfFilterManager && typeof tfFilterManager.initializeTFNameSearch === 'function') {
+        tfFilterManager.initializeTFNameSearch();
+    }
 }
+
+// Copy miRNA name to clipboard
+function copyMiRNAName() {
+    const mirnaNameElement = document.getElementById('mirnaDisplayName');
+    if (mirnaNameElement) {
+        const mirnaName = mirnaNameElement.textContent;
+        copyToClipboard(mirnaName);
+        
+        // Add visual feedback
+        mirnaNameElement.classList.add('copied');
+        setTimeout(() => {
+            mirnaNameElement.classList.remove('copied');
+        }, 1500);
+    }
+}
+
+// Add click event to miRNA name when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const mirnaNameElement = document.getElementById('mirnaDisplayName');
+    if (mirnaNameElement) {
+        mirnaNameElement.addEventListener('click', copyMiRNAName);
+        mirnaNameElement.style.cursor = 'pointer';
+    }
+    
+    // Add click events to other copyable fields
+    const copyableFields = ['fullName', 'mirbaseAccession', 'ensemblId', 'geneName', 'preMirnaCoordinates'];
+    copyableFields.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            element.addEventListener('click', function() {
+                const text = this.textContent;
+                copyToClipboard(text);
+                
+                // Add visual feedback
+                this.classList.add('copied');
+                setTimeout(() => {
+                    this.classList.remove('copied');
+                }, 1500);
+            });
+            element.style.cursor = 'pointer';
+        }
+    });
+});
+
+
+
+
 
 
 

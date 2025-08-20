@@ -86,7 +86,7 @@
                 <div class="info-column">
                     <div class="info-row">
                         <span class="info-label">Full Name:</span>
-                        <span class="info-value" id="fullName">Homo sapiens (human) hsa-let-7a-1</span>
+                        <span class="info-value copyable-item" id="fullName">Homo sapiens (human) hsa-let-7a-1</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Confidence:</span>
@@ -94,19 +94,19 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">miRBase Accession:</span>
-                        <span class="info-value" id="mirbaseAccession">MI0000060</span>
+                        <span class="info-value copyable-item" id="mirbaseAccession">MI0000060</span>
                     </div>
                     <div class="info-row" id="ensemblRow">
                         <span class="info-label">Ensembl ID:</span>
-                        <span class="info-value" id="ensemblId">ENSG00000199165.3</span>
+                        <span class="info-value copyable-item" id="ensemblId">ENSG00000199165.3</span>
                     </div>
                     <div class="info-row" id="geneNameRow">
                         <span class="info-label">Gene Name:</span>
-                        <span class="info-value" id="geneName">MIRLET7A1</span>
+                        <span class="info-value copyable-item" id="geneName">MIRLET7A1</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Pre-miRNA Coordinates:</span>
-                        <span class="info-value" id="preMirnaCoordinates">chr9:94,175,957-94,176,036(+)</span>
+                        <span class="info-value copyable-item" id="preMirnaCoordinates">chr9:94,175,957-94,176,036(+)</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Pre-miRNA Sequence:</span>
@@ -163,20 +163,22 @@
         </div>
     </div>
 
-    <!-- Genome Browser View -->
-    <div class="result-card">
-        <div class="result-header">
-            <h3 class="result-title">
-                <span class="material-symbols-outlined" style="color: #FB8F67;">browse</span>
-                Genome Browser View
-            </h3>
-        </div>
-        <div class="result-content">
-            <div id="genome-browser-container" class="genome-browser-container">
-                <!-- Genome Browser will be initialized here -->
-            </div>
-        </div>
-    </div>
+                        <!-- Genome Browser View -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h3 class="result-title">
+                                <span class="material-symbols-outlined" style="color: #FB8F67;">browse</span>
+                                Genome Browser View
+                            </h3>
+                        </div>
+                        <div class="result-content">
+                            <div id="genome-browser-container" class="genome-browser-container">
+                                <!-- Genome Browser will be initialized here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+
 
     <!-- Main TSS -->
     <div class="result-card">
@@ -219,6 +221,10 @@
                     <div class="info-item">
                         <span class="info-label">Host Gene Type:</span>
                         <span class="info-value">lncRNA</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Host Gene Coordinates:</span>
+                        <span class="info-value">chr9:94,166,274-94,200,905(+)</span>
                     </div>
                 </div>
                 <!-- Alternative content when no host gene exists -->
@@ -341,39 +347,47 @@
         </div>
         <div class="result-content collapsible-content" id="tfContent" style="display: none;">
             <!-- TF Filters -->
-            <div class="tf-filters">
-                <div class="filter-controls">
-                    <div class="filter-group">
-                        <label>TF Type:</label>
-                        <div class="custom-multiselect" id="tfTypeMultiselect">
-                            <button class="multiselect-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="selected-text">All Types</span>
-                                <span class="dropdown-arrow">▼</span>
-                            </button>
-                            <ul class="multiselect-dropdown">
-                                <li><label class="multiselect-item">
-                                    <input type="checkbox" value="Cell line" checked>
-                                    <span>Cell line</span>
-                                </label></li>
-                                <li><label class="multiselect-item">
-                                    <input type="checkbox" value="Brain" checked>
-                                    <span>Brain</span>
-                                </label></li>
-                                <li><label class="multiselect-item">
-                                    <input type="checkbox" value="Liver" checked>
-                                    <span>Liver</span>
-                                </label></li>
-                                <li><label class="multiselect-item">
-                                    <input type="checkbox" value="Heart" checked>
-                                    <span>Heart</span>
-                                </label></li>
-                                <li><label class="multiselect-item">
-                                    <input type="checkbox" value="Kidney" checked>
-                                    <span>Kidney</span>
-                                </label></li>
-                            </ul>
+                            <div class="tf-filters">
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label>TF Name Search:</label>
+                            <div class="tf-search-container">
+                                <input type="text" id="tfNameSearch" placeholder="Type TF name..." class="tf-search-input">
+                                <div class="tf-autocomplete" id="tfAutocomplete"></div>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <div class="filter-group">
+                            <label>TF Type:</label>
+                            <div class="custom-multiselect" id="tfTypeMultiselect">
+                                <button class="multiselect-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="selected-text">All Types</span>
+                                    <span class="dropdown-arrow">▼</span>
+                                </button>
+                                <ul class="multiselect-dropdown">
+                                    <li><label class="multiselect-item">
+                                        <input type="checkbox" value="Cell line" checked>
+                                        <span>Cell line</span>
+                                    </label></li>
+                                    <li><label class="multiselect-item">
+                                        <input type="checkbox" value="Brain" checked>
+                                        <span>Brain</span>
+                                    </label></li>
+                                    <li><label class="multiselect-item">
+                                        <input type="checkbox" value="Liver" checked>
+                                        <span>Liver</span>
+                                    </label></li>
+                                    <li><label class="multiselect-item">
+                                        <input type="checkbox" value="Heart" checked>
+                                        <span>Heart</span>
+                                    </label></li>
+                                    <li><label class="multiselect-item">
+                                        <input type="checkbox" value="Kidney" checked>
+                                        <span>Kidney</span>
+                                    </label></li>
+                                </ul>
+                            </div>
+                        </div>
                     
                     <div class="filter-group">
                         <label>Score Range:</label>
@@ -387,20 +401,19 @@
                     </div>
                     
                     <div class="filter-actions">
-                        <button id="applyFilters" class="filter-btn">Apply</button>
                         <button id="resetFilters" class="filter-btn reset-btn">Reset</button>
                         
                         <!-- Download Button with Dropdown -->
                         <div class="download-container">
-                            <div class="btn-group">
+                            <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-danger" id="downloadBtn">DOWNLOAD</button>
                                 <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="visually-hidden">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" data-format="tsv">tsv</a></li>
-                                    <li><a class="dropdown-item" href="#" data-format="csv">csv</a></li>
-                                    <li><a class="dropdown-item" href="#" data-format="excel">excel</a></li>
+                                    <li><a class="dropdown-item" href="#" data-format="tsv">TSV</a></li>
+                                    <li><a class="dropdown-item" href="#" data-format="csv">CSV</a></li>
+                                    <li><a class="dropdown-item" href="#" data-format="excel">Excel</a></li>
                                 </ul>
                             </div>
                         </div>

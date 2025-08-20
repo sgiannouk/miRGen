@@ -5,9 +5,12 @@ urlpatterns = [
     path('', views.home_view, name='home'),
     path('test/', views.test_view, name='test'),
     path('genome-browser-test/', views.genome_browser_test_view, name='genome_browser_test'),
+    path('igv-simple-test/', views.igv_simple_test_view, name='igv_simple_test'),
+    path('test-mirna-detail/', views.test_mirna_detail_view, name='test_mirna_detail'),
+    path('igv-minimal-test/', views.igv_minimal_test_view, name='igv_minimal_test'),
     path('search/', views.search_view, name='search'),
     path('browse/', views.browse_view, name='browse'),
-    path('download/', views.download_view, name='download'),
+    # path('download/', views.download_view, name='download'),  # Disabled - downloads now happen inline
     path('api/', views.api_view, name='api'),
     path('help/', views.help_view, name='help'),
     

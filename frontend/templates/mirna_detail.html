@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">
+                        <i class="fas fa-dna"></i>
+                        {{ mirna.name }} ({{ mirna.species.name }})
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Basic miRNA Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Basic Information</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Name:</strong></td>
+                                    <td>{{ mirna.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Species:</strong></td>
+                                    <td>{{ mirna.species.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Family:</strong></td>
+                                    <td>{{ mirna.family|default:"Not specified" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Chromosome:</strong></td>
+                                    <td>{{ mirna.chromosome|default:"Not specified" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Strand:</strong></td>
+                                    <td>{{ mirna.strand|default:"Not specified" }}</td>
+                                </tr>
+                                {% if mirna.start_position and mirna.end_position %}
+                                <tr>
+                                    <td><strong>Position:</strong></td>
+                                    <td>{{ mirna.start_position }} - {{ mirna.end_position }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Sequences</h5>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Precursor:</strong></label>
+                                <div class="bg-light p-2 rounded font-monospace small">
+                                    {{ mirna.precursor_sequence|default:"Not available"|truncatechars:100 }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Mature:</strong></label>
+                                <div class="bg-light p-2 rounded font-monospace small">
+                                    {{ mirna.mature_sequence|default:"Not available"|truncatechars:100 }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Genome Browser -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Genome Browser View</h5>
+                            <div id="igv-container" 
+                                 style="height: 420px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.08); border: 1px solid #e9ecef;">
+                                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                    <div class="text-center">
+                                        <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                                        <p>Loading genome browser...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expression Data -->
+                    {% if expression_data %}
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Expression Data</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Tissue</th>
+                                            <th>Condition</th>
+                                            <th>Expression Level</th>
+                                            <th>Unit</th>
+                                            <th>Sample Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for expr in expression_data %}
+                                        <tr>
+                                            <td>{{ expr.tissue }}</td>
+                                            <td>{{ expr.condition|default:"-" }}</td>
+                                            <td>{{ expr.expression_level }}</td>
+                                            <td>{{ expr.expression_unit }}</td>
+                                            <td>{{ expr.sample_count }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Target Genes -->
+                    {% if targets %}
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Target Genes ({{ targets|length }})</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Gene Name</th>
+                                            <th>Symbol</th>
+                                            <th>Prediction Score</th>
+                                            <th>Validated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for target in targets %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'gene_detail' target.gene.name %}" class="text-decoration-none">
+                                                    {{ target.gene.name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ target.gene.symbol|default:"-" }}</td>
+                                            <td>
+                                                {% if target.prediction_score %}
+                                                <span class="badge bg-primary">{{ target.prediction_score|floatformat:3 }}</span>
+                                                {% else %}
+                                                <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if target.experimental_validation %}
+                                                <span class="badge bg-success">Yes</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary">No</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Description -->
+                    {% if mirna.description %}
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Description</h5>
+                            <p>{{ mirna.description }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- igv.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/igv@2.17.0/dist/igv.min.js"></script>
+<!-- our wrapper -->
+<script type="module">
+    import { initMiRNABrowser } from "{% static 'js/igv_mirna.js' %}";
+
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            const cfg = {
+                containerId: "igv-container",
+                genome: "{{ genome_build|default:'hg38' }}",                   // "hg38" or "mm10"
+                chr: "{{ chrom|default:'' }}",                                 // e.g., "chr19"
+                tss: {{ main_tss|default:0 }},                                // 1-based
+                alt_tss: {{ alt_tss_list_json|default:"[]"|safe }},           // optional array
+
+                bigBedUrl: "{{ biggenepred_url|default:'' }}",           // URL to bigBed file
+
+                host: {{ host_json|default:"null"|safe }},                    // null or {name,strand,tx_start,tx_end,exons?,cds_start?,cds_end?}
+                pre:  {{ pre_json|default:"null"|safe }},                     // {name,strand,start,end}
+                matures: {{ matures_json|default:"[]"|safe }},                // [{name,strand,start,end}, ...]
+                padding: {{ padding|default:5000 }}                           // padding around locus
+            };
+
+            // Debug: log the configuration
+            console.log('IGV Configuration:', cfg);
+            
+            // Check if we have the minimum required data
+            if (cfg.chr && cfg.tss && cfg.pre) {
+                console.log('Initializing IGV browser with valid data');
+                await initMiRNABrowser(cfg);
+            } else {
+                console.log('Insufficient data for IGV browser:', {
+                    chr: cfg.chr,
+                    tss: cfg.tss,
+                    pre: cfg.pre
+                });
+                // Show message if no genomic data available
+                document.getElementById('igv-container').innerHTML = `
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <div class="text-center">
+                            <i class="fas fa-info-circle fa-2x mb-2"></i>
+                            <p>Genomic coordinates not available for this miRNA</p>
+                        </div>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Failed to initialize genome browser:', error);
+            document.getElementById('igv-container').innerHTML = `
+                <div class="d-flex align-items-center justify-content-center h-100 text-danger">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <p>Failed to load genome browser</p>
+                        <small class="text-muted">${error.message}</small>
+                    </div>
+                </div>
+            `;
+        }
+    });
+</script>
+{% endblock %}

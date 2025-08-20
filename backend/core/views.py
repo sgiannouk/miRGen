@@ -24,6 +24,18 @@ def genome_browser_test_view(request):
     """Genome Browser test view"""
     return render(request, 'test_genome_browser.html')
 
+def igv_simple_test_view(request):
+    """Simple IGV.js test view"""
+    return render(request, 'test_igv_simple.html')
+
+def test_mirna_detail_view(request):
+    """Test miRNA detail view with mock data"""
+    return render(request, 'test_mirna_detail.html')
+
+def igv_minimal_test_view(request):
+    """Minimal IGV.js test view"""
+    return render(request, 'test_igv_minimal.html')
+
 def home_view(request):
     """Home page view"""
     # Get some statistics for the home page
@@ -118,9 +130,9 @@ def browse_view(request):
     
     return render(request, 'browse.html', context)
 
-def download_view(request):
-    """Download data view"""
-    return render(request, 'download.html')
+# def download_view(request):
+#     """Download data view"""
+#     return render(request, 'download.html')
 
 def api_view(request):
     """API documentation view"""
@@ -195,16 +207,85 @@ class MiRNADetailView(View):
             # Get target genes
             targets = MiRNATarget.objects.filter(mirna=mirna).select_related('gene')[:20]
             
+            # Prepare genome browser context
+            genome_browser_context = self._prepare_genome_browser_context(mirna)
+            
             context = {
                 'mirna': mirna,
                 'expression_data': expression_data,
-                'targets': targets
+                'targets': targets,
+                **genome_browser_context
             }
             
             return render(request, 'mirna_detail.html', context)
             
         except MiRNA.DoesNotExist:
             return render(request, '404.html', status=404)
+    
+    def _prepare_genome_browser_context(self, mirna):
+        """Prepare context data for the genome browser"""
+        from django.conf import settings
+        import json
+        
+        # Default values
+        context = {
+            'genome_build': 'hg38',
+            'chrom': '',
+            'main_tss': 0,
+            'alt_tss_list_json': '[]',
+            'biggenepred_url': '',
+            'host_json': 'null',
+            'pre_json': 'null',
+            'matures_json': '[]',
+            'padding': getattr(settings, 'IGV_DEFAULT_PADDING', 5000)
+        }
+        
+        # Determine genome build based on species
+        if mirna.species.name.lower() == 'human':
+            context['genome_build'] = 'hg38'
+            context['biggenepred_url'] = settings.IGV_BIGGENEPRED.get('hg38', '')
+        elif mirna.species.name.lower() == 'mouse':
+            context['genome_build'] = 'mm10'
+            context['biggenepred_url'] = settings.IGV_BIGGENEPRED.get('mm10', '')
+        
+        # Set chromosome if available
+        if mirna.chromosome:
+            # Ensure chromosome format is correct (e.g., "chr19" not "19")
+            chrom = mirna.chromosome
+            if not chrom.startswith('chr'):
+                chrom = f"chr{chrom}"
+            context['chrom'] = chrom
+        
+        # Set TSS and pre-miRNA coordinates if available
+        if mirna.start_position and mirna.end_position:
+            # For now, use start_position as TSS (you may want to adjust this logic)
+            context['main_tss'] = mirna.start_position
+            
+            # Create pre-miRNA data
+            pre_data = {
+                'name': mirna.name,
+                'strand': mirna.strand or '+',
+                'start': mirna.start_position,
+                'end': mirna.end_position
+            }
+            context['pre_json'] = json.dumps(pre_data)
+            
+            # Create mature miRNA data (simplified - you may want to enhance this)
+            if mirna.mature_sequence:
+                # Estimate mature miRNA positions (this is simplified)
+                mature_length = len(mirna.mature_sequence)
+                mature_start = mirna.start_position + 5  # Approximate offset
+                mature_end = mature_start + mature_length
+                
+                mature_data = [{
+                    'name': f"{mirna.name}-5p",  # Simplified naming
+                    'strand': mirna.strand or '+',
+                    'start': mature_start,
+                    'end': mature_end
+                }]
+                context['matures_json'] = json.dumps(mature_data)
+        
+        return context
 
 class GeneDetailView(View):
     """Detailed view for a specific gene"""

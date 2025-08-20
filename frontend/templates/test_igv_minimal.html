@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal IGV.js Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 8px;
+        }
+        .test-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .test-btn.success {
+            background: #28a745;
+        }
+        .test-btn.error {
+            background: #dc3545;
+        }
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        .log-info { color: #007bff; }
+        .log-success { color: #28a745; }
+        .log-error { color: #dc3545; }
+        .log-warning { color: #ffc107; }
+        
+        #igv-container {
+            height: 420px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.08);
+            border: 1px solid #e9ecef;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-dna"></i> Minimal IGV.js Test</h1>
+            <p>Testing IGV.js with minimal configuration to isolate issues</p>
+        </div>
+        
+        <div class="test-controls">
+            <h3>Test Controls</h3>
+            <button class="test-btn" onclick="testIGVMinimal()">
+                <i class="fas fa-play"></i> Test Minimal IGV
+            </button>
+            <button class="test-btn" onclick="testIGVWithContainer()">
+                <i class="fas fa-box"></i> Test with Container
+            </button>
+            <button class="test-btn" onclick="testIGVDynamic()">
+                <i class="fas fa-sync"></i> Test Dynamic Loading
+            </button>
+            <button class="test-btn" onclick="testDOMManipulation()">
+                <i class="fas fa-code"></i> Test DOM Manipulation
+            </button>
+            <button class="test-btn" onclick="testIGVAlternativeVersion()">
+                <i class="fas fa-exchange-alt"></i> Test Alternative IGV Version
+            </button>
+            <button class="test-btn" onclick="testFallbackGenomeBrowser()">
+                <i class="fas fa-dna"></i> Test Fallback Browser
+            </button>
+            <button class="test-btn" onclick="testNetworkConnectivity()">
+                <i class="fas fa-wifi"></i> Test Network Connectivity
+            </button>
+            <button class="test-btn" onclick="clearLog()">
+                <i class="fas fa-trash"></i> Clear Log
+            </button>
+            <button class="test-btn" onclick="checkDependencies()">
+                <i class="fas fa-check-circle"></i> Check Dependencies
+            </button>
+        </div>
+        
+        <div id="igv-container">
+            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                <div class="text-center">
+                    <i class="fas fa-info-circle fa-2x mb-2"></i>
+                    <p>IGV.js container ready</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log-container" id="logContainer">
+            <div class="log-entry log-info">Ready to test. Click a test button above.</div>
+        </div>
+    </div>
+
+    <!-- Load IGV.js from CDN -->
+    <script src="https://unpkg.com/igv@2.15.7/dist/igv.min.js"></script>
+    
+    <!-- Fallback CDN sources -->
+    <script>
+        // Check if IGV loaded from primary source
+        if (typeof igv === 'undefined') {
+            console.log('Primary IGV.js source failed, trying fallback...');
+            
+            // Try alternative CDN sources
+            const fallbackSources = [
+                'https://cdn.jsdelivr.net/npm/igv@2.15.7/dist/igv.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/igv/2.15.7/igv.min.js',
+                'https://unpkg.com/igv@2.16.0/dist/igv.min.js',
+                'https://cdn.jsdelivr.net/npm/igv@2.16.0/dist/igv.min.js'
+            ];
+            
+            let currentSourceIndex = 0;
+            
+            function tryNextSource() {
+                if (currentSourceIndex >= fallbackSources.length) {
+                    console.error('All IGV.js sources failed to load');
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = fallbackSources[currentSourceIndex];
+                console.log(`Trying IGV.js source: ${fallbackSources[currentSourceIndex]}`);
+                
+                script.onload = () => {
+                    console.log(`IGV.js loaded successfully from: ${fallbackSources[currentSourceIndex]}`);
+                };
+                
+                script.onerror = () => {
+                    console.warn(`Failed to load IGV.js from: ${fallbackSources[currentSourceIndex]}`);
+                    currentSourceIndex++;
+                    tryNextSource();
+                };
+                
+                document.head.appendChild(script);
+            }
+            
+            // Start trying fallback sources
+            tryNextSource();
+        }
+    </script>
+    
+    <script>
+        let igvBrowser = null;
+        let testLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push({ message: logEntry, type });
+            
+            const logContainer = document.getElementById('logContainer');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-entry log-${type}`;
+            logDiv.textContent = logEntry;
+            logContainer.appendChild(logDiv);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '';
+            testLog = [];
+            log('Log cleared', 'info');
+        }
+        
+        function checkDependencies() {
+            log('Checking dependencies...', 'info');
+            
+            if (typeof igv !== 'undefined') {
+                log('✓ igv.js loaded successfully', 'success');
+                log(`IGV version: ${igv.version || 'Unknown'}`, 'info');
+                log(`IGV type: ${typeof igv}`, 'info');
+                
+                // Check for createBrowser function
+                if (typeof igv.createBrowser === 'function') {
+                    log('✓ igv.createBrowser function available', 'success');
+                } else {
+                    log('✗ igv.createBrowser function not available', 'error');
+                    log(`createBrowser type: ${typeof igv.createBrowser}`, 'info');
+                }
+                
+                // List all available properties
+                log('Available IGV properties:', 'info');
+                for (let prop in igv) {
+                    if (igv.hasOwnProperty(prop)) {
+                        log(`  ${prop}: ${typeof igv[prop]}`, 'info');
+                    }
+                }
+            } else {
+                log('✗ igv.js not loaded', 'error');
+            }
+            
+            const container = document.getElementById('igv-container');
+            if (container) {
+                log('✓ IGV container found', 'success');
+                log(`Container type: ${container.tagName}, ID: ${container.id}`, 'info');
+                log(`Container instanceof HTMLElement: ${container instanceof HTMLElement}`, 'info');
+                log(`Container appendChild available: ${typeof container.appendChild === 'function'}`, 'info');
+            } else {
+                log('✗ IGV container not found', 'error');
+            }
+            
+            log('Dependency check completed', 'info');
+        }
+        
+        function testIGVMinimal() {
+            log('Testing minimal IGV.js functionality...', 'info');
+            
+            try {
+                if (typeof igv === 'undefined') {
+                    throw new Error('igv.js not loaded');
+                }
+                
+                if (typeof igv.createBrowser !== 'function') {
+                    throw new Error('igv.createBrowser function not available');
+                }
+                
+                log('Creating minimal IGV browser...', 'info');
+                
+                // Create a completely new container
+                const newContainer = document.createElement('div');
+                newContainer.id = 'igv-test-container';
+                newContainer.style.height = '400px';
+                newContainer.style.border = '1px solid #ccc';
+                newContainer.style.margin = '10px 0';
+                
+                // Insert it before the log container
+                const logContainer = document.getElementById('logContainer');
+                logContainer.parentNode.insertBefore(newContainer, logContainer);
+                
+                log('Created new container for testing', 'info');
+                
+                const options = {
+                    genome: 'hg38',
+                    locus: 'chr9:94,175,000-94,176,000'
+                };
+                
+                log('Calling igv.createBrowser...', 'info');
+                log(`Options: ${JSON.stringify(options)}`, 'info');
+                
+                igv.createBrowser(newContainer, options)
+                    .then(browser => {
+                        igvBrowser = browser;
+                        log('✓ Minimal IGV browser created successfully', 'success');
+                    })
+                    .catch(error => {
+                        log(`✗ Failed to create minimal browser: ${error.message}`, 'error');
+                        console.error('IGV error details:', error);
+                        console.error('Error stack:', error.stack);
+                    });
+                
+            } catch (error) {
+                log(`✗ Minimal IGV test failed: ${error.message}`, 'error');
+                console.error('Test error details:', error);
+            }
+        }
+        
+        function loadIGVDynamically() {
+            log('Attempting to load IGV.js dynamically...', 'info');
+            
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/igv@2.15.7/dist/igv.min.js';
+                script.onload = () => {
+                    log('✓ IGV.js loaded dynamically', 'success');
+                    resolve();
+                };
+                script.onerror = () => {
+                    log('✗ Failed to load IGV.js dynamically', 'error');
+                    reject(new Error('Failed to load IGV.js'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        async function testIGVDynamic() {
+            log('Testing IGV.js with dynamic loading...', 'info');
+            
+            try {
+                // Try to load IGV.js if not already loaded
+                if (typeof igv === 'undefined') {
+                    await loadIGVDynamically();
+                }
+                
+                if (typeof igv.createBrowser !== 'function') {
+                    throw new Error('igv.createBrowser function not available after loading');
+                }
+                
+                log('Creating IGV browser with dynamic loading...', 'info');
+                
+                // Create a completely new container
+                const newContainer = document.createElement('div');
+                newContainer.id = 'igv-dynamic-container';
+                newContainer.style.height = '400px';
+                newContainer.style.border = '1px solid #ccc';
+                newContainer.style.margin = '10px 0';
+                
+                // Insert it before the log container
+                const logContainer = document.getElementById('logContainer');
+                logContainer.parentNode.insertBefore(newContainer, logContainer);
+                
+                log('Created new container for dynamic testing', 'info');
+                
+                const options = {
+                    genome: 'hg38',
+                    locus: 'chr9:94,175,000-94,176,000'
+                };
+                
+                log('Calling igv.createBrowser with dynamic loading...', 'info');
+                
+                const browser = await igv.createBrowser(newContainer, options);
+                igvBrowser = browser;
+                log('✓ IGV browser created successfully with dynamic loading', 'success');
+                
+            } catch (error) {
+                log(`✗ Dynamic IGV test failed: ${error.message}`, 'error');
+                console.error('Dynamic test error details:', error);
+            }
+        }
+        
+        function testDOMManipulation() {
+            log('Testing basic DOM manipulation...', 'info');
+            
+            try {
+                // Create a test container
+                const testContainer = document.createElement('div');
+                testContainer.id = 'dom-test-container';
+                testContainer.style.height = '200px';
+                testContainer.style.border = '2px solid #ff0000';
+                testContainer.style.margin = '10px 0';
+                testContainer.style.backgroundColor = '#f0f0f0';
+                
+                // Test basic DOM operations
+                testContainer.innerHTML = '<h3>DOM Test Container</h3>';
+                testContainer.appendChild(document.createElement('p')).textContent = 'This is a test paragraph';
+                
+                // Insert it before the log container
+                const logContainer = document.getElementById('logContainer');
+                logContainer.parentNode.insertBefore(testContainer, logContainer);
+                
+                log('✓ DOM manipulation test passed', 'success');
+                
+                // Test if the container can be manipulated by external libraries
+                setTimeout(() => {
+                    try {
+                        // Try to add more content
+                        testContainer.appendChild(document.createElement('div')).textContent = 'Dynamic content added';
+                        log('✓ Dynamic DOM manipulation test passed', 'success');
+                    } catch (error) {
+                        log(`✗ Dynamic DOM manipulation failed: ${error.message}`, 'error');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                log(`✗ DOM manipulation test failed: ${error.message}`, 'error');
+                console.error('DOM test error details:', error);
+            }
+        }
+        
+        function testIGVAlternativeVersion() {
+            log('Testing IGV.js with alternative version...', 'info');
+            
+            try {
+                // Try to load a different IGV.js version
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/igv@2.16.0/dist/igv.min.js';
+                
+                script.onload = () => {
+                    log('✓ Alternative IGV.js version loaded', 'success');
+                    
+                    // Check if this version has createBrowser
+                    if (typeof window.igv !== 'undefined' && typeof window.igv.createBrowser === 'function') {
+                        log('✓ Alternative version has createBrowser function', 'success');
+                        
+                        // Try to create a browser with the alternative version
+                        const altContainer = document.createElement('div');
+                        altContainer.id = 'igv-alt-container';
+                        altContainer.style.height = '400px';
+                        altContainer.style.border = '1px solid #00ff00';
+                        altContainer.style.margin = '10px 0';
+                        
+                        const logContainer = document.getElementById('logContainer');
+                        logContainer.parentNode.insertBefore(altContainer, logContainer);
+                        
+                        log('Testing alternative IGV version...', 'info');
+                        
+                        window.igv.createBrowser(altContainer, {
+                            genome: 'hg38',
+                            locus: 'chr9:94,175,000-94,176,000'
+                        }).then(browser => {
+                            log('✓ Alternative IGV version worked!', 'success');
+                        }).catch(error => {
+                            log(`✗ Alternative IGV version failed: ${error.message}`, 'error');
+                        });
+                        
+                    } else {
+                        log('✗ Alternative version does not have createBrowser function', 'error');
+                    }
+                };
+                
+                script.onerror = () => {
+                    log('✗ Failed to load alternative IGV.js version', 'error');
+                };
+                
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                log(`✗ Alternative version test failed: ${error.message}`, 'error');
+                console.error('Alternative version test error details:', error);
+            }
+        }
+        
+        function testFallbackGenomeBrowser() {
+            log('Testing fallback genome browser (no IGV.js)...', 'info');
+            
+            try {
+                // Create a simple genome browser visualization
+                const fallbackContainer = document.createElement('div');
+                fallbackContainer.id = 'fallback-genome-browser';
+                fallbackContainer.style.height = '400px';
+                fallbackContainer.style.border = '2px solid #0000ff';
+                fallbackContainer.style.margin = '10px 0';
+                fallbackContainer.style.backgroundColor = '#f8f9fa';
+                fallbackContainer.style.padding = '20px';
+                fallbackContainer.style.fontFamily = 'monospace';
+                
+                // Insert it before the log container
+                const logContainer = document.getElementById('logContainer');
+                logContainer.parentNode.insertBefore(fallbackContainer, logContainer);
+                
+                // Create a simple genome visualization
+                const genomeData = {
+                    chromosome: 'chr9',
+                    start: 94175000,
+                    end: 94177000,
+                    features: [
+                        { name: 'TSS', position: 94166274, type: 'transcription_start_site' },
+                        { name: 'pre-miRNA', start: 94175957, end: 94176036, type: 'pre_mirna' },
+                        { name: 'mature-5p', start: 94175962, end: 94175983, type: 'mature_mirna' }
+                    ]
+                };
+                
+                // Create the visualization
+                fallbackContainer.innerHTML = `
+                    <h3>Fallback Genome Browser</h3>
+                    <p><strong>Chromosome:</strong> ${genomeData.chromosome}</p>
+                    <p><strong>Region:</strong> ${genomeData.start.toLocaleString()} - ${genomeData.end.toLocaleString()}</p>
+                    <div style="margin: 20px 0; padding: 10px; background: white; border: 1px solid #ddd;">
+                        <h4>Genomic Features</h4>
+                        <div style="position: relative; height: 200px; border: 1px solid #ccc; background: #f0f0f0;">
+                            ${genomeData.features.map(feature => {
+                                if (feature.type === 'transcription_start_site') {
+                                    const x = ((feature.position - genomeData.start) / (genomeData.end - genomeData.start)) * 100;
+                                    return `<div style="position: absolute; left: ${x}%; top: 10px; width: 2px; height: 180px; background: red; transform: translateX(-50%);">
+                                        <div style="position: absolute; top: -20px; left: -20px; width: 40px; text-align: center; font-size: 10px;">${feature.name}</div>
+                                    </div>`;
+                                } else if (feature.type === 'pre_mirna') {
+                                    const x1 = ((feature.start - genomeData.start) / (genomeData.end - genomeData.start)) * 100;
+                                    const x2 = ((feature.end - genomeData.start) / (genomeData.end - genomeData.start)) * 100;
+                                    const width = x2 - x1;
+                                    return `<div style="position: absolute; left: ${x1}%; top: 50px; width: ${width}%; height: 30px; background: green; border: 1px solid darkgreen; transform: translateY(-50%);">
+                                        <div style="position: absolute; top: -20px; left: 0; width: 100%; text-align: center; font-size: 10px;">${feature.name}</div>
+                                    </div>`;
+                                } else if (feature.type === 'mature_mirna') {
+                                    const x1 = ((feature.start - genomeData.start) / (genomeData.end - genomeData.start)) * 100;
+                                    const x2 = ((feature.end - genomeData.start) / (genomeData.end - genomeData.start)) * 100;
+                                    const width = x2 - x1;
+                                    return `<div style="position: absolute; left: ${x1}%; top: 100px; width: ${width}%; height: 20px; background: orange; border: 1px solid darkorange; transform: translateY(-50%);">
+                                        <div style="position: absolute; top: -20px; left: 0; width: 100%; text-align: center; font-size: 10px;">${feature.name}</div>
+                                    </div>`;
+                                }
+                            }).join('')}
+                        </div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                            <p>This is a fallback visualization. IGV.js failed to load.</p>
+                        </div>
+                    </div>
+                `;
+                
+                log('✓ Fallback genome browser created successfully', 'success');
+                
+            } catch (error) {
+                log(`✗ Fallback genome browser failed: ${error.message}`, 'error');
+                console.error('Fallback browser error details:', error);
+            }
+        }
+        
+        function testNetworkConnectivity() {
+            log('Testing network connectivity to CDN sources...', 'info');
+            
+            const testUrls = [
+                'https://unpkg.com/igv@2.15.7/dist/igv.min.js',
+                'https://cdn.jsdelivr.net/npm/igv@2.15.7/dist/igv.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/igv/2.15.7/igv.min.js'
+            ];
+            
+            testUrls.forEach((url, index) => {
+                log(`Testing connectivity to: ${url}`, 'info');
+                
+                fetch(url, { method: 'HEAD', mode: 'no-cors' })
+                    .then(() => {
+                        log(`✓ CDN ${index + 1} accessible: ${url}`, 'success');
+                    })
+                    .catch(error => {
+                        log(`✗ CDN ${index + 1} failed: ${url} - ${error.message}`, 'error');
+                    });
+            });
+            
+            // Also test a simple known-good URL
+            fetch('https://httpbin.org/get')
+                .then(response => response.json())
+                .then(data => {
+                    log('✓ General internet connectivity working', 'success');
+                })
+                .catch(error => {
+                    log(`✗ General internet connectivity failed: ${error.message}`, 'error');
+                });
+        }
+        
+        function testIGVWithContainer() {
+            log('Testing IGV.js with existing container...', 'info');
+            
+            try {
+                if (typeof igv === 'undefined') {
+                    throw new Error('igv.js not loaded');
+                }
+                
+                if (typeof igv.createBrowser !== 'function') {
+                    throw new Error('igv.createBrowser function not available');
+                }
+                
+                const container = document.getElementById('igv-container');
+                if (!container) {
+                    throw new Error('IGV container not found');
+                }
+                
+                log('Clearing existing container...', 'info');
+                container.innerHTML = '';
+                
+                log('Creating IGV browser with existing container...', 'info');
+                
+                const options = {
+                    genome: 'hg38',
+                    locus: 'chr9:94,175,000-94,176,000'
+                };
+                
+                log('Calling igv.createBrowser with existing container...', 'info');
+                
+                igv.createBrowser(container, options)
+                    .then(browser => {
+                        igvBrowser = browser;
+                        log('✓ IGV browser created successfully with existing container', 'success');
+                    })
+                    .catch(error => {
+                        log(`✗ Failed to create browser with existing container: ${error.message}`, 'error');
+                        console.error('IGV error details:', error);
+                        console.error('Error stack:', error.stack);
+                    });
+                
+            } catch (error) {
+                log(`✗ Container test failed: ${error.message}`, 'error');
+                console.error('Test error details:', error);
+            }
+        }
+        
+        // Auto-check dependencies on load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, checking dependencies...', 'info');
+            setTimeout(checkDependencies, 1000);
+            
+            // Check again after fallback sources have had time to load
+            setTimeout(() => {
+                log('Checking dependencies again after fallback sources...', 'info');
+                checkDependencies();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
